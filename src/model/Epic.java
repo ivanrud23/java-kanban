@@ -18,6 +18,4 @@ public class Epic extends Task {
     public void setChildren(ArrayList<Integer> children) {
         this.children = children;
     }
-
-
 }

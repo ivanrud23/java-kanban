@@ -1,15 +1,18 @@
 package model;
-
 public class Task {
-    String name;
-    String description;
-    Integer id;
-    String status = "NEW";
+
+    protected String name;
+    protected String description;
+    protected Integer id;
+    protected String status = "NEW";
 
     public Task(String name, String description, Integer id) {
         this.name = name;
         this.description = description;
         this.id = id;
+    }
+    public Task(String status) {
+        this.status = status;
     }
 
     public String getName() {
@@ -43,4 +46,6 @@ public class Task {
     public void setStatus(String status) {
         this.status = status;
     }
+
+
 }
