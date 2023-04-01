@@ -1,4 +1,5 @@
 package model;
+
 public class Task {
 
     protected String name;
@@ -11,9 +12,13 @@ public class Task {
         this.description = description;
         this.id = id;
     }
-    public Task(String status) {
+    public Task(String name, String description, Integer id, String status) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
         this.status = status;
     }
+
 
     public String getName() {
         return name;

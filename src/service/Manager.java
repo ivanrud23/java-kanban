@@ -1,8 +1,12 @@
 package service;
+
 import model.Epic;
 import model.Subtask;
 import model.Task;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 public class Manager {
     Integer idCounter = 1;
@@ -54,17 +58,17 @@ public class Manager {
         idCounterPlus();
     }
 
-    public Integer idCounterPlus() {
+    public void idCounterPlus() {
         idCounter++;
-        return idCounter;
     }
 
 
-    public void printAll(){
+    public void printAll() {
         printTask();
         printSubtask();
         printEpic();
     }
+
     public void printTask() {
         for (Integer id : taskStorage.keySet()) {
             System.out.println("Идентификатор — " + taskStorage.get(id).getId());
@@ -74,6 +78,7 @@ public class Manager {
             System.out.println();
         }
     }
+
     public void printSubtask() {
         for (Integer id : subTaskStorage.keySet()) {
             System.out.println("Идентификатор — " + subTaskStorage.get(id).getId());
@@ -98,7 +103,6 @@ public class Manager {
 
     public void updateTask(Integer id, Task newTask) {
         if (taskStorage.containsKey(id)) {
-            newTask.setStatus("IN_PROGRESS");
             newTask.setId(id);
             taskStorage.put(id, newTask);
         }
@@ -109,26 +113,29 @@ public class Manager {
             int parentId = subTaskStorage.get(id).getParentId();
             newSubTask.setParentId(parentId);
             newSubTask.setId(id);
-            newSubTask.setStatus("DONE");
             subTaskStorage.put(id, newSubTask);
-            addSubtask(parentId, id);
+            addSubTaskToEpic(parentId, id);
             checkEpicStatus(newSubTask.getParentId());
         }
     }
 
-    public void addSubtask(Integer parentId, Integer id) {
+    public void updateEpic(Integer id, Epic newEpic) {
+        if (epicStorage.containsKey(id)) {
+            List<Integer> childId = epicStorage.get(id).getChildren();
+            newEpic.setStatus(epicStorage.get(id).getStatus());
+            newEpic.setChildren(childId);
+            newEpic.setId(id);
+            epicStorage.put(id, newEpic);
+        }
+    }
+
+    public void addSubTaskToEpic(Integer parentId, Integer id) {
         Epic epicTask = epicStorage.get(parentId);
         if (!epicTask.getChildren().contains(id)) {
             epicTask.getChildren().add(id);
         }
         epicStorage.put(parentId, epicTask);
         checkEpicStatus(parentId);
-    }
-
-    public void addChild(Integer id, Integer childId) {
-        Subtask subtask = subTaskStorage.get(childId);
-        subtask.setParentId(id);
-        subTaskStorage.put(childId, subtask);
     }
 
     public void removeTask(Integer id) {
@@ -172,7 +179,7 @@ public class Manager {
         for (Integer subtaskId : epic.getChildren()) {
             if (subTaskStorage.get(subtaskId).getStatus().equals("NEW")) {
                 newCount++;
-            } else if (subTaskStorage.get(subtaskId).getStatus().equals("IN_PROGRESS")){
+            } else if (subTaskStorage.get(subtaskId).getStatus().equals("IN_PROGRESS")) {
                 progressCount++;
             } else {
                 doneCount++;

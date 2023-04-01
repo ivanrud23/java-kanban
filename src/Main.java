@@ -1,13 +1,12 @@
+import model.Epic;
 import model.Subtask;
 import model.Task;
 import service.Manager;
-import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         Manager manager = new Manager();
-        Scanner scanner = new Scanner(System.in);
 
         manager.createTask("Task_1", "Desk_task_1");
         manager.createTask("Task_2", "Desk_task_2");
@@ -20,12 +19,14 @@ public class Main {
         manager.printAll();
         System.out.println("****************************************************");
 
-        Task newTask = new Task("Task_1_change", "Desk_task_1", 1);
+        Task newTask = new Task("Task_1_change", "Desk_task_1", 1, "IN_PROGRESS");
         manager.updateTask(1, newTask);
-        Subtask newSubTask = new Subtask("Sub_1_change", "Desk_Sub_1_change", 3, 3);
+        Subtask newSubTask = new Subtask("Sub_1_change", "Desk_Sub_1_change", 3, "IN_PROGRESS", 3);
         manager.updateSubTask(5, newSubTask);
-        Subtask newSubTask2 = new Subtask("Sub_2_change", "Desk_Sub_2_change", 3, 4);
+        Subtask newSubTask2 = new Subtask("Sub_2_change", "Desk_Sub_2_change", 3, "DONE", 4);
         manager.updateSubTask(7, newSubTask2);
+        Epic newEpic = new Epic("Epic_1_change", "Desk_Epic_1_change", 12);
+        manager.updateEpic(3, newEpic);
 
         manager.printAll();
         System.out.println("****************************************************");
