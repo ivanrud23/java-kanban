@@ -5,14 +5,14 @@ public class Task {
     protected String name;
     protected String description;
     protected Integer id;
-    protected String status = "NEW";
+    protected Status status = Status.NEW;
 
     public Task(String name, String description, Integer id) {
         this.name = name;
         this.description = description;
         this.id = id;
     }
-    public Task(String name, String description, Integer id, String status) {
+    public Task(String name, String description, Integer id, Status status) {
         this.name = name;
         this.description = description;
         this.id = id;
@@ -44,11 +44,11 @@ public class Task {
         this.id = id;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
