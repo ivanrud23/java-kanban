@@ -1,50 +1,62 @@
 package service;
 
 import model.Epic;
+import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager{
     Integer idCounter = 1;
     HashMap<Integer, Task> taskStorage = new HashMap<>();
     HashMap<Integer, Subtask> subTaskStorage = new HashMap<>();
     HashMap<Integer, Epic> epicStorage = new HashMap<>();
-    Scanner scanner = new Scanner(System.in);
+    InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
-    public HashMap<Integer, Task> getTaskStorage() {
-        return taskStorage;
+    @Override
+    public void getTaskStorage() {
+        List<Task> taskId = new ArrayList<>(taskStorage.values());
+        inMemoryHistoryManager.updateHistory(taskId);
     }
 
+    @Override
     public void setTaskStorage(HashMap<Integer, Task> taskStorage) {
         this.taskStorage = taskStorage;
     }
 
-    public HashMap<Integer, Subtask> getSubTaskStorage() {
-        return subTaskStorage;
+    @Override
+    public void getSubTaskStorage() {
+        List<Task> taskId = new ArrayList<>(subTaskStorage.values());
+        inMemoryHistoryManager.updateHistory(taskId);
     }
 
+    @Override
     public void setSubTaskStorage(HashMap<Integer, Subtask> subTaskStorage) {
         this.subTaskStorage = subTaskStorage;
     }
 
-    public HashMap<Integer, Epic> getEpicStorage() {
-        return epicStorage;
+    @Override
+    public void getEpicStorage() {
+        List<Task> taskId = new ArrayList<>(epicStorage.values());
+        inMemoryHistoryManager.updateHistory(taskId);
     }
 
+    @Override
     public void setEpicStorage(HashMap<Integer, Epic> epicStorage) {
         this.epicStorage = epicStorage;
     }
 
+    @Override
     public void createTask(String name, String description) {
         Task task = new Task(name, description, idCounter);
         taskStorage.put(idCounter, task);
         idCounterPlus();
     }
 
+    @Override
     public void createSubTask(String name, String description, Integer parentId) {
         Subtask subtask = new Subtask(name, description, idCounter, parentId);
         subTaskStorage.put(idCounter, subtask);
@@ -52,23 +64,26 @@ public class Manager {
         idCounterPlus();
     }
 
+    @Override
     public void createEpic(String name, String description) {
         Epic epic = new Epic(name, description, idCounter);
         epicStorage.put(idCounter, epic);
         idCounterPlus();
     }
 
+    @Override
     public void idCounterPlus() {
         idCounter++;
     }
 
-
+    @Override
     public void printAll() {
         printTask();
         printSubtask();
         printEpic();
     }
 
+    @Override
     public void printTask() {
         for (Integer id : taskStorage.keySet()) {
             System.out.println("Идентификатор — " + taskStorage.get(id).getId());
@@ -79,6 +94,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void printSubtask() {
         for (Integer id : subTaskStorage.keySet()) {
             System.out.println("Идентификатор — " + subTaskStorage.get(id).getId());
@@ -90,6 +106,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void printEpic() {
         for (Integer id : epicStorage.keySet()) {
             System.out.println("Идентификатор — " + epicStorage.get(id).getId());
@@ -101,6 +118,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateTask(Integer id, Task newTask) {
         if (taskStorage.containsKey(id)) {
             newTask.setId(id);
@@ -108,6 +126,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateSubTask(Integer id, Subtask newSubTask) {
         if (subTaskStorage.containsKey(id)) {
             int parentId = subTaskStorage.get(id).getParentId();
@@ -119,6 +138,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateEpic(Integer id, Epic newEpic) {
         if (epicStorage.containsKey(id)) {
             List<Integer> childId = epicStorage.get(id).getChildren();
@@ -129,6 +149,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void addSubTaskToEpic(Integer parentId, Integer id) {
         Epic epicTask = epicStorage.get(parentId);
         if (!epicTask.getChildren().contains(id)) {
@@ -138,6 +159,7 @@ public class Manager {
         checkEpicStatus(parentId);
     }
 
+    @Override
     public void removeTask(Integer id) {
         if (epicStorage.containsKey(id)) {
             List<Integer> childId = epicStorage.get(id).getChildren();
@@ -158,41 +180,45 @@ public class Manager {
         }
     }
 
+    @Override
     public void clearSubtask() {
         subTaskStorage.clear();
     }
 
+    @Override
     public void clearTask() {
         taskStorage.clear();
     }
 
+    @Override
     public void clearEpic() {
         epicStorage.clear();
     }
 
+    @Override
     public void checkEpicStatus(Integer id) {
         Epic epic = epicStorage.get(id);
-        String newStatus = "";
+        Status newStatus = Status.NEW;
         int newCount = 0;
         int progressCount = 0;
         int doneCount = 0;
         for (Integer subtaskId : epic.getChildren()) {
-            if (subTaskStorage.get(subtaskId).getStatus().equals("NEW")) {
+            if (subTaskStorage.get(subtaskId).getStatus().equals(Status.NEW)) {
                 newCount++;
-            } else if (subTaskStorage.get(subtaskId).getStatus().equals("IN_PROGRESS")) {
+            } else if (subTaskStorage.get(subtaskId).getStatus().equals(Status.IN_PROGRESS)) {
                 progressCount++;
             } else {
                 doneCount++;
             }
         }
         if (progressCount > 0 || (newCount > 0 && doneCount > 0)) {
-            newStatus = "IN_PROGRESS";
+            newStatus = Status.IN_PROGRESS;
         } else if (newCount == 0 && doneCount > 0) {
-            newStatus = "DONE";
-        } else {
-            newStatus = "NEW";
+            newStatus = Status.DONE;
         }
         epic.setStatus(newStatus);
         epicStorage.put(id, epic);
     }
+
+
 }
