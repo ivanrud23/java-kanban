@@ -26,33 +26,23 @@ public class InMemoryTaskManager implements TaskManager{
         } else {
             task = epicStorage.get(id);
         }
+        inMemoryHistoryManager.add(task);
         return task;
+
     }
     @Override
     public List<Task> getTaskStorage() {
-        List<Task> taskId = new ArrayList<>(taskStorage.values());
-        for (Task task : taskId) {
-            inMemoryHistoryManager.add(task);
-        }
-        return taskId;
+        return new ArrayList<>(taskStorage.values());
     }
 
     @Override
     public List<Task> getSubTaskStorage() {
-        List<Task> taskId = new ArrayList<>(subTaskStorage.values());
-        for (Task task : taskId) {
-            inMemoryHistoryManager.add(task);
-        }
-        return taskId;
+        return new ArrayList<>(subTaskStorage.values());
     }
 
     @Override
     public List<Task> getEpicStorage() {
-        List<Task> taskId = new ArrayList<>(epicStorage.values());
-        for (Task task : taskId) {
-            inMemoryHistoryManager.add(task);
-        }
-        return taskId;
+        return new ArrayList<>(epicStorage.values());
     }
 
     @Override
