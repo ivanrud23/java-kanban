@@ -5,8 +5,7 @@ import java.util.List;
 
 public class Epic extends Task {
 
-
-    List<Integer> children = new ArrayList<>();
+    private List<Integer> children = new ArrayList<>();
 
     public Epic(String name, String description, Integer id) {
         super(name, description, id);
@@ -15,7 +14,6 @@ public class Epic extends Task {
     public Epic(String name, String description, Integer id, Status status) {
         super(name, description, id, status);
     }
-
 
     public List<Integer> getChildren() {
         return children;

@@ -20,7 +20,6 @@ public class Main {
         inMemoryTaskManager.createSubTask("Sub_2", "Desk_Sub_2", 3);
         inMemoryTaskManager.createSubTask("Sub_3", "Desk_Sub_3", 4);
 
-
         inMemoryTaskManager.printAll();
         inMemoryTaskManager.getTaskStorage();
         inMemoryHistoryManager.getHistory();
@@ -45,7 +44,6 @@ public class Main {
         inMemoryTaskManager.removeTask(2);
         inMemoryTaskManager.removeTask(4);
         inMemoryTaskManager.removeTask(5);
-
 
         inMemoryTaskManager.printAll();
         inMemoryTaskManager.getEpicStorage();
