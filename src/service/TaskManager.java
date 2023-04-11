@@ -9,17 +9,13 @@ import java.util.List;
 
 public interface TaskManager {
 
-    public void getTaskStorage();
+    Task getById(Integer id);
 
-    public void setTaskStorage(HashMap<Integer, Task> taskStorage);
+    public List<Task> getTaskStorage();
 
-    public void getSubTaskStorage();
+    public List<Task> getSubTaskStorage();
 
-    public void setSubTaskStorage(HashMap<Integer, Subtask> subTaskStorage);
-
-    public void getEpicStorage();
-
-    public void setEpicStorage(HashMap<Integer, Epic> epicStorage);
+    public List<Task> getEpicStorage();
 
     public void createTask(String name, String description);
 
@@ -54,6 +50,5 @@ public interface TaskManager {
     public void clearEpic();
 
     public void checkEpicStatus(Integer id);
-
 
 }

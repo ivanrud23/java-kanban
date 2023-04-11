@@ -1,7 +1,7 @@
 package model;
 
 public class Subtask extends Task {
-    Integer parentId;
+    private Integer parentId;
 
     public Subtask(String name, String description, Integer id, Integer parentId) {
         super(name, description, id);

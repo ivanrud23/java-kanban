@@ -17,36 +17,42 @@ public class InMemoryTaskManager implements TaskManager{
     InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
     @Override
-    public void getTaskStorage() {
+    public Task getById(Integer id) {
+        Task task;
+        if (taskStorage.containsKey(id)) {
+            task = taskStorage.get(id);
+        } else if (subTaskStorage.containsKey(id)) {
+            task = subTaskStorage.get(id);
+        } else {
+            task = epicStorage.get(id);
+        }
+        return task;
+    }
+    @Override
+    public List<Task> getTaskStorage() {
         List<Task> taskId = new ArrayList<>(taskStorage.values());
-        inMemoryHistoryManager.updateHistory(taskId);
+        for (Task task : taskId) {
+            inMemoryHistoryManager.add(task);
+        }
+        return taskId;
     }
 
     @Override
-    public void setTaskStorage(HashMap<Integer, Task> taskStorage) {
-        this.taskStorage = taskStorage;
-    }
-
-    @Override
-    public void getSubTaskStorage() {
+    public List<Task> getSubTaskStorage() {
         List<Task> taskId = new ArrayList<>(subTaskStorage.values());
-        inMemoryHistoryManager.updateHistory(taskId);
+        for (Task task : taskId) {
+            inMemoryHistoryManager.add(task);
+        }
+        return taskId;
     }
 
     @Override
-    public void setSubTaskStorage(HashMap<Integer, Subtask> subTaskStorage) {
-        this.subTaskStorage = subTaskStorage;
-    }
-
-    @Override
-    public void getEpicStorage() {
+    public List<Task> getEpicStorage() {
         List<Task> taskId = new ArrayList<>(epicStorage.values());
-        inMemoryHistoryManager.updateHistory(taskId);
-    }
-
-    @Override
-    public void setEpicStorage(HashMap<Integer, Epic> epicStorage) {
-        this.epicStorage = epicStorage;
+        for (Task task : taskId) {
+            inMemoryHistoryManager.add(task);
+        }
+        return taskId;
     }
 
     @Override
@@ -183,6 +189,9 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void clearSubtask() {
         subTaskStorage.clear();
+        for (Epic epic : epicStorage.values()) {
+            epic.getChildren().clear();
+        }
     }
 
     @Override
@@ -193,6 +202,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void clearEpic() {
         epicStorage.clear();
+        subTaskStorage.clear();
     }
 
     @Override
@@ -219,6 +229,5 @@ public class InMemoryTaskManager implements TaskManager{
         epic.setStatus(newStatus);
         epicStorage.put(id, epic);
     }
-
 
 }

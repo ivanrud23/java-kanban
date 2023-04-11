@@ -10,7 +10,14 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     @Override
     public void add(Task task) {
-
+        if (historyStorage.size() == 10) {
+            for (int i = 0; i < historyStorage.size() - 1; i++) {
+                historyStorage.add(i, historyStorage.get(i + 1));
+            }
+            historyStorage.add(10, task);
+        } else {
+            historyStorage.add(task);
+        }
     }
 
     @Override
@@ -28,18 +35,4 @@ public class InMemoryHistoryManager implements HistoryManager{
         return historyStorage;
     }
 
-    @Override
-    public void updateHistory(List<Task> taskList) {
-        for (Task newTask : taskList) {
-            if (historyStorage.size() == 10) {
-                for (int i = 0; i < historyStorage.size() - 1; i++) {
-                    historyStorage.add(i, historyStorage.get(i + 1));
-                }
-                historyStorage.add(10, newTask);
-            } else {
-                historyStorage.add(newTask);
-            }
-        }
-
-    }
 }
