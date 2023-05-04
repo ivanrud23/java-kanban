@@ -28,8 +28,8 @@ public class InMemoryTaskManager implements TaskManager{
         }
         inMemoryHistoryManager.add(task);
         return task;
-
     }
+
     @Override
     public List<Task> getTaskStorage() {
         return new ArrayList<>(taskStorage.values());
@@ -159,18 +159,22 @@ public class InMemoryTaskManager implements TaskManager{
     public void removeTask(Integer id) {
         if (epicStorage.containsKey(id)) {
             List<Integer> childId = epicStorage.get(id).getChildren();
-            for (Object child : childId) {
+            for (Integer child : childId) {
                 subTaskStorage.remove(child);
+                inMemoryHistoryManager.remove(child);
             }
             epicStorage.remove(id);
+            inMemoryHistoryManager.remove(id);
         } else if (subTaskStorage.containsKey(id)) {
             Integer parentId = subTaskStorage.get(id).getParentId();
             Epic epic = epicStorage.get(parentId);
             epic.getChildren().remove(id);
             epicStorage.put(parentId, epic);
             subTaskStorage.remove(id);
+            inMemoryHistoryManager.remove(id);
         } else if (taskStorage.containsKey(id)) {
             taskStorage.remove(id);
+            inMemoryHistoryManager.remove(id);
         } else {
             System.out.println("Задачи с этим номер еще не создана");
         }
