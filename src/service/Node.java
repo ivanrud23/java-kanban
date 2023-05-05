@@ -1,28 +1,40 @@
 package service;
 
-public class Node<E> {
-    public E data;
-    public Node<E> next;
-    public Node<E> prev;
+import model.Task;
 
-    public Node(E data, Node<E> next, Node<E> prev) {
+public class Node {
+    private Task data;
+    private Node next;
+    private Node prev;
+
+    public Node(Task data, Node next, Node prev) {
         this.data = data;
         this.next = next;
         this.prev = prev;
     }
 
-    public void removeNode(Node removeNode) {
-        if (removeNode.prev == null) {
-            removeNode.next.prev = null;
-        } else if (removeNode.next == null) {
-            removeNode.prev.next = null;
-        } else {
-            Node prevNode = this.prev;
-            Node nextNode = this.next;
+    public Task getData() {
+        return data;
+    }
 
-            removeNode.prev.next = nextNode;
-            removeNode.next.prev = prevNode;
-        }
+    public void setData(Task data) {
+        this.data = data;
+    }
+
+    public Node getNext() {
+        return next;
+    }
+
+    public void setNext(Node next) {
+        this.next = next;
+    }
+
+    public Node getPrev() {
+        return prev;
+    }
+
+    public void setPrev(Node prev) {
+        this.prev = prev;
     }
 }
 

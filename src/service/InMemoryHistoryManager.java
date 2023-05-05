@@ -2,42 +2,38 @@ package service;
 
 import model.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    static Map<Integer, Node> historyStorage = new HashMap<>();
-    static CustomLinkedList<Task> customLinkedList = new CustomLinkedList<>();
+        private CustomLinkedList customLinkedList = new CustomLinkedList();
 
     @Override
     public void add(Task task) {
-        if (historyStorage.containsKey(task.getId())) {
+        if (customLinkedList.historyStorage.containsKey(task.getId())) {
             remove(task.getId());
         }
         customLinkedList.linkLast(task);
-        historyStorage.put(task.getId(), customLinkedList.tail);
+        customLinkedList.historyStorage.put(task.getId(), customLinkedList.tail);
     }
 
     @Override
     public void remove(int id) {
-        Node node = historyStorage.get(id);
+        Node node = customLinkedList.historyStorage.get(id);
         if (node == customLinkedList.tail) {
-            customLinkedList.tail = node.prev;
-            customLinkedList.tail.next = null;
+            customLinkedList.tail = node.getNext();
+            customLinkedList.tail.setNext(null);
         }
         if (node == customLinkedList.head) {
-            customLinkedList.head = node.next;
-            customLinkedList.head.prev = null;
+            customLinkedList.head = node.getNext();
+            customLinkedList.head.setPrev(null);
         }
-        node.removeNode(node);
+        customLinkedList.removeNode(node);
         customLinkedList.size--;
-        historyStorage.remove(id);
+        customLinkedList.historyStorage.remove(id);
     }
 
     @Override
-    public List<Task> getHistory() {
+    public List getHistory() {
         System.out.println("—  —  —  —  —  —  —  —  —  —  —  —");
         System.out.println("Истроия просмотренных задач:");
         for (Task task : customLinkedList.getTasks()) {
@@ -51,34 +47,50 @@ public class InMemoryHistoryManager implements HistoryManager {
         return customLinkedList.getTasks();
     }
 
-    public static class CustomLinkedList<T>{
+    private class CustomLinkedList {
         private Node head;
-        private Node<T> tail;
+        private Node tail;
         private int size = 0;
+        private Map<Integer, Node> historyStorage = new HashMap<>();
 
-        public void linkLast(T element) {
-            final Node<T> oldTail = tail;
-            final Node<T> newNode = new Node<>( element, null, tail);
+        private void linkLast(Task element) {
+            final Node oldTail = tail;
+            final Node newNode = new Node(element, null, tail);
             tail = newNode;
             if (oldTail != null) {
-                oldTail.next = newNode;
+                oldTail.setNext(tail);
             } else {
                 head = newNode;
             }
             size++;
         }
 
-        public List<T> getTasks() {
-            List <T> listOfTasks = new ArrayList<>();
-            if (size == 0) {
-                return null;
+        private List<Task> getTasks() {
+            List<Task> listOfTasks = new ArrayList<>();
+            if (historyStorage.isEmpty()) {
+                return Collections.emptyList();
             }
-            Node<T> newNode = this.head;
+            Node newNode = this.head;
             for (int i = 0; i < size; i++) {
-                listOfTasks.add(newNode.data);
-                newNode = newNode.next;
+                Task newTask = newNode.getData();
+                listOfTasks.add(newTask);
+                newNode = newNode.getNext();
             }
             return  listOfTasks;
+        }
+
+        private void removeNode(Node removeNode) {
+            if (removeNode.getPrev() == null) {
+                removeNode.getNext().setPrev(null);
+            } else if (removeNode.getNext() == null) {
+                removeNode.getPrev().setNext(null);
+            } else {
+                Node prevNode = removeNode.getPrev();
+                Node nextNode = removeNode.getNext();
+
+                removeNode.getPrev().setNext(nextNode);
+                removeNode.getNext().setPrev(prevNode);
+            }
         }
     }
 }
