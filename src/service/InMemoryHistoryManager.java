@@ -20,14 +20,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void remove(int id) {
         Node node = customLinkedList.historyStorage.get(id);
         if (node == customLinkedList.tail) {
-            customLinkedList.tail = node.getNext();
+            customLinkedList.tail = node.getPrev();
             customLinkedList.tail.setNext(null);
-        }
-        if (node == customLinkedList.head) {
+        } else if (node == customLinkedList.head) {
             customLinkedList.head = node.getNext();
             customLinkedList.head.setPrev(null);
+        } else {
+            customLinkedList.removeNode(node);
         }
-        customLinkedList.removeNode(node);
         customLinkedList.size--;
         customLinkedList.historyStorage.remove(id);
     }
