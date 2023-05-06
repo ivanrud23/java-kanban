@@ -5,7 +5,7 @@ import model.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-        private CustomLinkedList customLinkedList = new CustomLinkedList();
+    private CustomLinkedList customLinkedList = new CustomLinkedList();
 
     @Override
     public void add(Task task) {
@@ -13,7 +13,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             remove(task.getId());
         }
         customLinkedList.linkLast(task);
-        customLinkedList.historyStorage.put(task.getId(), customLinkedList.tail);
     }
 
     @Override
@@ -28,7 +27,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             customLinkedList.removeNode(node);
         }
-        customLinkedList.size--;
         customLinkedList.historyStorage.remove(id);
     }
 
@@ -50,8 +48,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     private class CustomLinkedList {
         private Node head;
         private Node tail;
-        private int size = 0;
         private Map<Integer, Node> historyStorage = new HashMap<>();
+        
+        
 
         private void linkLast(Task element) {
             final Node oldTail = tail;
@@ -62,7 +61,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             } else {
                 head = newNode;
             }
-            size++;
+            customLinkedList.historyStorage.put(element.getId(), customLinkedList.tail);
         }
 
         private List<Task> getTasks() {
@@ -71,12 +70,12 @@ public class InMemoryHistoryManager implements HistoryManager {
                 return Collections.emptyList();
             }
             Node newNode = this.head;
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < historyStorage.size(); i++) {
                 Task newTask = newNode.getData();
                 listOfTasks.add(newTask);
                 newNode = newNode.getNext();
             }
-            return  listOfTasks;
+            return listOfTasks;
         }
 
         private void removeNode(Node removeNode) {
