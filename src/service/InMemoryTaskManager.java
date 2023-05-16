@@ -15,7 +15,7 @@ public class InMemoryTaskManager implements TaskManager{
     HashMap<Integer, Task> taskStorage = new HashMap<>();
     HashMap<Integer, Subtask> subTaskStorage = new HashMap<>();
     HashMap<Integer, Epic> epicStorage = new HashMap<>();
-    private InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    protected InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
     public InMemoryHistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
