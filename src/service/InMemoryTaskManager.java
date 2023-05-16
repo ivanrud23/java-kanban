@@ -5,6 +5,7 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public Task getById(Integer id) {
+    public Task getById(Integer id) throws IOException {
         Task task;
         if (taskStorage.containsKey(id)) {
             task = taskStorage.get(id);
@@ -50,14 +51,21 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void createTask(String name, String description) {
+    public void createTask(String name, String description) throws IOException {
         Task task = new Task(name, description, idCounter);
         taskStorage.put(idCounter, task);
         idCounterPlus();
     }
 
     @Override
-    public void createSubTask(String name, String description, Integer parentId) {
+    public void createTask(String name, String description, Integer id, Status status) throws IOException {
+        Task task = new Task(name, description, id, status);
+        taskStorage.put(id, task);
+        idCounterPlus();
+    }
+
+    @Override
+    public void createSubTask(String name, String description, Integer parentId) throws IOException {
         Subtask subtask = new Subtask(name, description, idCounter, parentId);
         subTaskStorage.put(idCounter, subtask);
         epicStorage.get(parentId).getChildren().add(idCounter);
@@ -65,11 +73,27 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void createEpic(String name, String description) {
+    public void createEpic(String name, String description) throws IOException {
         Epic epic = new Epic(name, description, idCounter);
         epicStorage.put(idCounter, epic);
         idCounterPlus();
     }
+
+    @Override
+    public void createSubTask(String name, String description, Integer id, Status status, Integer parentId) throws IOException {
+        Subtask subtask = new Subtask(name, description, id, status, parentId);
+        subTaskStorage.put(id, subtask);
+        epicStorage.get(parentId).getChildren().add(id);
+        idCounterPlus();
+    }
+
+    @Override
+    public void createEpic(String name, String description, Integer id, Status status) throws IOException {
+        Epic epic = new Epic(name, description, id, status);
+        epicStorage.put(id, epic);
+        idCounterPlus();
+    }
+
 
     @Override
     public void idCounterPlus() {
@@ -119,7 +143,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void updateTask(Integer id, Task newTask) {
+    public void updateTask(Integer id, Task newTask) throws IOException {
         if (taskStorage.containsKey(id)) {
             newTask.setId(id);
             taskStorage.put(id, newTask);
@@ -127,7 +151,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void updateSubTask(Integer id, Subtask newSubTask) {
+    public void updateSubTask(Integer id, Subtask newSubTask) throws IOException {
         if (subTaskStorage.containsKey(id)) {
             int parentId = subTaskStorage.get(id).getParentId();
             newSubTask.setParentId(parentId);
@@ -139,7 +163,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void updateEpic(Integer id, Epic newEpic) {
+    public void updateEpic(Integer id, Epic newEpic) throws IOException {
         if (epicStorage.containsKey(id)) {
             List<Integer> childId = epicStorage.get(id).getChildren();
             newEpic.setStatus(epicStorage.get(id).getStatus());
@@ -150,7 +174,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void addSubTaskToEpic(Integer parentId, Integer id) {
+    public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException {
         Epic epicTask = epicStorage.get(parentId);
         if (!epicTask.getChildren().contains(id)) {
             epicTask.getChildren().add(id);
@@ -160,7 +184,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void removeTask(Integer id) {
+    public void removeTask(Integer id) throws IOException {
         if (epicStorage.containsKey(id)) {
             List<Integer> childId = epicStorage.get(id).getChildren();
             for (Integer child : childId) {
@@ -185,7 +209,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void clearSubtask() {
+    public void clearSubtask() throws IOException {
         subTaskStorage.clear();
         for (Epic epic : epicStorage.values()) {
             epic.getChildren().clear();
@@ -193,12 +217,12 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void clearTask() {
+    public void clearTask() throws IOException {
         taskStorage.clear();
     }
 
     @Override
-    public void clearEpic() {
+    public void clearEpic() throws IOException {
         epicStorage.clear();
         subTaskStorage.clear();
     }

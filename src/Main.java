@@ -1,8 +1,10 @@
 import service.InMemoryTaskManager;
 
+import java.io.IOException;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
         inMemoryTaskManager.createTask("Task_1", "Desk_task_1");

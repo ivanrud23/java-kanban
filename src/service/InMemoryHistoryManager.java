@@ -7,6 +7,14 @@ import java.util.*;
 public class InMemoryHistoryManager implements HistoryManager {
     private CustomLinkedList customLinkedList = new CustomLinkedList();
 
+    public CustomLinkedList getCustomLinkedList() {
+        return customLinkedList;
+    }
+
+    public void setCustomLinkedList(CustomLinkedList customLinkedList) {
+        this.customLinkedList = customLinkedList;
+    }
+
     @Override
     public void add(Task task) {
         if (customLinkedList.historyStorage.containsKey(task.getId())) {
@@ -14,6 +22,14 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         customLinkedList.linkLast(task);
     }
+
+//    @Override
+//    public void addHistory(Task task) {
+//        if (customLinkedList.historyStorage.containsKey(task.getId())) {
+//            remove(task.getId());
+//        }
+//        customLinkedList.linkLast(task);
+//    }
 
     @Override
     public void remove(int id) {
@@ -31,7 +47,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public List getHistory() {
+    public List<Task> getHistory() {
         System.out.println("—  —  —  —  —  —  —  —  —  —  —  —");
         System.out.println("Истроия просмотренных задач:");
         for (Task task : customLinkedList.getTasks()) {

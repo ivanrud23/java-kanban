@@ -6,6 +6,7 @@ public class Task {
     protected String description;
     protected Integer id;
     protected Status status = Status.NEW;
+    protected int epic;
 
     public Task(String name, String description, Integer id) {
         this.name = name;
@@ -19,6 +20,13 @@ public class Task {
         this.status = status;
     }
 
+    public Task(String name, String description, Integer id, Status status, int epic) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
+        this.epic = epic;
+    }
 
     public String getName() {
         return name;
@@ -52,5 +60,11 @@ public class Task {
         this.status = status;
     }
 
+    public int getEpic() {
+        return epic;
+    }
 
+    public void setEpic(int epic) {
+        this.epic = epic;
+    }
 }
