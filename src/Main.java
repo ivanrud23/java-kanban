@@ -22,7 +22,6 @@ public class Main {
         inMemoryTaskManager.getById(1);
         inMemoryTaskManager.getById(2);
         inMemoryTaskManager.getById(7);
-        inMemoryTaskManager.getInMemoryHistoryManager().getHistory();
         inMemoryTaskManager.getById(5);
         inMemoryTaskManager.getById(6);
         inMemoryTaskManager.getById(3);
@@ -30,7 +29,6 @@ public class Main {
         inMemoryTaskManager.getById(1);
         inMemoryTaskManager.getById(7);
         inMemoryTaskManager.getById(2);
-        inMemoryTaskManager.getInMemoryHistoryManager().getHistory();
         inMemoryTaskManager.getById(3);
         inMemoryTaskManager.getById(4);
         inMemoryTaskManager.getById(5);
@@ -45,13 +43,10 @@ public class Main {
         inMemoryTaskManager.getById(1);
         inMemoryTaskManager.getById(2);
         inMemoryTaskManager.getById(7);
-        inMemoryTaskManager.getInMemoryHistoryManager().getHistory();
 
         inMemoryTaskManager.removeTask(2);
-        inMemoryTaskManager.getInMemoryHistoryManager().getHistory();
-
         inMemoryTaskManager.removeTask(3);
-        inMemoryTaskManager.getInMemoryHistoryManager().getHistory();
+
 
 
     }

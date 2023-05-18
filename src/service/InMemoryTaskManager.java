@@ -12,14 +12,10 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager{
     Integer idCounter = 1;
-    HashMap<Integer, Task> taskStorage = new HashMap<>();
-    HashMap<Integer, Subtask> subTaskStorage = new HashMap<>();
-    HashMap<Integer, Epic> epicStorage = new HashMap<>();
+    protected HashMap<Integer, Task> taskStorage = new HashMap<>();
+    protected HashMap<Integer, Subtask> subTaskStorage = new HashMap<>();
+    protected HashMap<Integer, Epic> epicStorage = new HashMap<>();
     protected InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-
-    public InMemoryHistoryManager getInMemoryHistoryManager() {
-        return inMemoryHistoryManager;
-    }
 
     @Override
     public Task getById(Integer id) throws IOException {
@@ -51,6 +47,15 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
+    public void createTask(Task task) throws IOException {
+        taskStorage.put(task.getId(), task);
+        if (task.getId() >= idCounter) {
+            idCounter = task.getId();
+            idCounterPlus();
+        }
+    }
+
+    @Override
     public void createTask(String name, String description) throws IOException {
         Task task = new Task(name, description, idCounter);
         taskStorage.put(idCounter, task);
@@ -58,10 +63,13 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void createTask(String name, String description, Integer id, Status status) throws IOException {
-        Task task = new Task(name, description, id, status);
-        taskStorage.put(id, task);
-        idCounterPlus();
+    public void createSubTask(Subtask subtask) throws IOException {
+        subTaskStorage.put(subtask.getId(), subtask);
+        epicStorage.get(subtask.getParentId()).getChildren().add(subtask.getId());
+        if (subtask.getId() >= idCounter) {
+            idCounter = subtask.getId();
+            idCounterPlus();
+        }
     }
 
     @Override
@@ -73,27 +81,20 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
+    public void createEpic(Epic epic) throws IOException {
+        epicStorage.put(epic.getId(), epic);
+        if (epic.getId() >= idCounter) {
+            idCounter = epic.getId();
+            idCounterPlus();
+        }
+    }
+
+    @Override
     public void createEpic(String name, String description) throws IOException {
         Epic epic = new Epic(name, description, idCounter);
         epicStorage.put(idCounter, epic);
         idCounterPlus();
     }
-
-    @Override
-    public void createSubTask(String name, String description, Integer id, Status status, Integer parentId) throws IOException {
-        Subtask subtask = new Subtask(name, description, id, status, parentId);
-        subTaskStorage.put(id, subtask);
-        epicStorage.get(parentId).getChildren().add(id);
-        idCounterPlus();
-    }
-
-    @Override
-    public void createEpic(String name, String description, Integer id, Status status) throws IOException {
-        Epic epic = new Epic(name, description, id, status);
-        epicStorage.put(id, epic);
-        idCounterPlus();
-    }
-
 
     @Override
     public void idCounterPlus() {

@@ -19,17 +19,20 @@ public interface TaskManager {
 
     public List<Task> getEpicStorage();
 
-    public void createTask(String name, String description) throws IOException;
 
-    public void createTask(String name, String description, Integer id, Status status) throws IOException;
 
-    public void createSubTask(String name, String description, Integer parentId) throws IOException;
 
-    void createSubTask(String name, String description, Integer id, Status status, Integer parentId) throws IOException;
+    void createTask(Task task) throws IOException;
 
-    void createEpic(String name, String description, Integer id, Status status) throws IOException;
+    void createTask(String name, String description) throws IOException;
 
-    public void createEpic(String name, String description) throws IOException;
+    void createSubTask(Subtask subtask) throws IOException;
+
+    void createSubTask(String name, String description, Integer parentId) throws IOException;
+
+    public void createEpic(Epic epic) throws IOException;
+
+    void createEpic(String name, String description) throws IOException;
 
     public void idCounterPlus();
 
