@@ -23,27 +23,32 @@ public class InMemoryHistoryManager implements HistoryManager {
         customLinkedList.linkLast(task);
     }
 
-//    @Override
-//    public void addHistory(Task task) {
-//        if (customLinkedList.historyStorage.containsKey(task.getId())) {
-//            remove(task.getId());
-//        }
-//        customLinkedList.linkLast(task);
-//    }
+    @Override
+    public void addHistory(Task task) {
+        if (customLinkedList.historyStorage.containsKey(task.getId())) {
+            remove(task.getId());
+        }
+        customLinkedList.linkLast(task);
+    }
 
     @Override
-    public void remove(int id) {
+    public void remove(int id) throws NullPointerException{
         Node node = customLinkedList.historyStorage.get(id);
-        if (node == customLinkedList.tail) {
+        if (customLinkedList.historyStorage.size() == 1) {
+            customLinkedList.historyStorage.remove(id);
+        } else if (node == customLinkedList.tail) {
             customLinkedList.tail = node.getPrev();
             customLinkedList.tail.setNext(null);
+            customLinkedList.historyStorage.remove(id);
         } else if (node == customLinkedList.head) {
             customLinkedList.head = node.getNext();
             customLinkedList.head.setPrev(null);
+            customLinkedList.historyStorage.remove(id);
         } else {
             customLinkedList.removeNode(node);
+            customLinkedList.historyStorage.remove(id);
         }
-        customLinkedList.historyStorage.remove(id);
+
     }
 
     @Override

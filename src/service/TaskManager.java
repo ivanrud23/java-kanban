@@ -6,6 +6,7 @@ import model.Subtask;
 import model.Task;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,20 +14,22 @@ public interface TaskManager {
 
     Task getById(Integer id) throws IOException;
 
-    public List<Task> getTaskStorage();
+    public List<Task> getTaskStorage() throws IOException;
 
-    public List<Task> getSubTaskStorage();
+    public List<Task> getSubTaskStorage() throws IOException;
 
-    public List<Task> getEpicStorage();
-
-
+    public List<Task> getEpicStorage() throws IOException;
 
 
     void createTask(Task task) throws IOException;
 
     void createTask(String name, String description) throws IOException;
 
+    void createTask(String name, String description, String startTime, String duration) throws IOException;
+
     void createSubTask(Subtask subtask) throws IOException;
+
+    void createSubTask(String name, String description, String startTime, String duration, Integer parentId) throws IOException;
 
     void createSubTask(String name, String description, Integer parentId) throws IOException;
 
@@ -61,5 +64,6 @@ public interface TaskManager {
     public void clearEpic() throws IOException;
 
     public void checkEpicStatus(Integer id);
+
 
 }
