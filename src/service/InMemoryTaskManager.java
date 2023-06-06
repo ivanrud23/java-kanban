@@ -63,7 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createTask(Task task) throws IOException {
-        task = checkTaskTime(task);
+        checkTaskTime(task);
         taskStorage.put(task.getId(), task);
         taskSortByTime.add(task);
         if (task.getId() >= idCounter) {
@@ -73,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createSubTask(Subtask subtask) throws IOException, NullPointerException, NoSuchElementException {
-        subtask = (Subtask) checkTaskTime(subtask);
+        checkTaskTime(subtask);
         subTaskStorage.put(subtask.getId(), subtask);
         taskSortByTime.add(subtask);
         Epic parentEpic = epicStorage.get(subtask.getParentId());
@@ -207,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
         return finalList;
     }
 
-    public Task checkTaskTime(Task taskCheck) {
+    public Boolean checkTaskTime(Task taskCheck) {
         if (taskSortByTime != null) {
             for (Task task : taskSortByTime) {
                 if ((taskCheck.getStartTime() != null && task.getStartTime() != null)
@@ -216,8 +216,9 @@ public class InMemoryTaskManager implements TaskManager {
                     taskCheck.setStartTime(task.getEndTime());
                 }
             }
+            return true;
         }
-        return taskCheck;
+        return false;
     }
 
     @Override
