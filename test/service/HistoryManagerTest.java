@@ -39,9 +39,9 @@ class HistoryManagerTest {
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);
 
-        inMemoryTaskManager.createTask("Task_1", "Desk_task_1");
-        inMemoryTaskManager.createTask("Task_2", "Desk_task_2");
-        inMemoryTaskManager.createTask("Task_3", "Desk_task_3");
+        inMemoryTaskManager.createTask(new Task("Task_1", "Desk_task_1", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_2", "Desk_task_2", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_3", "Desk_task_3", inMemoryTaskManager.idCounter()));
         inMemoryTaskManager.getById(1);
         inMemoryTaskManager.getById(2);
         inMemoryTaskManager.getById(3);
@@ -60,9 +60,9 @@ class HistoryManagerTest {
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);
 
-        inMemoryTaskManager.createTask("Task_1", "Desk_task_1");
-        inMemoryTaskManager.createTask("Task_2", "Desk_task_2");
-        inMemoryTaskManager.createTask("Task_3", "Desk_task_3");
+        inMemoryTaskManager.createTask(new Task("Task_1", "Desk_task_1", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_2", "Desk_task_2", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_3", "Desk_task_3", inMemoryTaskManager.idCounter()));
         inMemoryTaskManager.getById(1);
         inMemoryTaskManager.getById(2);
         inMemoryTaskManager.getById(3);
@@ -82,9 +82,9 @@ class HistoryManagerTest {
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);
 
-        inMemoryTaskManager.createTask("Task_1", "Desk_task_1");
-        inMemoryTaskManager.createTask("Task_2", "Desk_task_2");
-        inMemoryTaskManager.createTask("Task_3", "Desk_task_3");
+        inMemoryTaskManager.createTask(new Task("Task_1", "Desk_task_1", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_2", "Desk_task_2", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_3", "Desk_task_3", inMemoryTaskManager.idCounter()));
         inMemoryTaskManager.getById(1);
         inMemoryTaskManager.getById(2);
         inMemoryTaskManager.getById(3);
@@ -104,9 +104,9 @@ class HistoryManagerTest {
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);
 
-        inMemoryTaskManager.createTask("Task_1", "Desk_task_1");
-        inMemoryTaskManager.createTask("Task_2", "Desk_task_2");
-        inMemoryTaskManager.createTask("Task_3", "Desk_task_3");
+        inMemoryTaskManager.createTask(new Task("Task_1", "Desk_task_1", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_2", "Desk_task_2", inMemoryTaskManager.idCounter()));
+        inMemoryTaskManager.createTask(new Task("Task_3", "Desk_task_3", inMemoryTaskManager.idCounter()));
         inMemoryTaskManager.getById(1);
         inMemoryTaskManager.getById(2);
         inMemoryTaskManager.getById(3);

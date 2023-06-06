@@ -23,21 +23,23 @@ public interface TaskManager {
 
     void createTask(Task task) throws IOException;
 
-    void createTask(String name, String description) throws IOException;
-
-    void createTask(String name, String description, String startTime, String duration) throws IOException;
+//    void createTask(String name, String description) throws IOException;
+//
+//    void createTask(String name, String description, String startTime, String duration) throws IOException;
 
     void createSubTask(Subtask subtask) throws IOException;
 
-    void createSubTask(String name, String description, String startTime, String duration, Integer parentId) throws IOException;
-
-    void createSubTask(String name, String description, Integer parentId) throws IOException;
+//    void createSubTask(String name, String description, String startTime, String duration, Integer parentId) throws IOException;
+//
+//    void createSubTask(String name, String description, Integer parentId) throws IOException;
 
     public void createEpic(Epic epic) throws IOException;
 
-    void createEpic(String name, String description) throws IOException;
+//    void createEpic(String name, String description) throws IOException;
 
     public void idCounterPlus();
+
+    public Integer idCounter();
 
     public void printAll();
 

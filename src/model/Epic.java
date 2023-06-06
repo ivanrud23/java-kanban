@@ -52,7 +52,8 @@ public class Epic extends Task {
                     + ", children=" + children +
                     '}';
         } else {
-            return ", startTime=" + startTime +
+            return super.toString() +
+                    ", startTime=" + startTime +
                     ", duration=" + duration +
                     ", children=" + children +
                     '}';

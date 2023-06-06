@@ -13,7 +13,7 @@ import java.util.List;
 
 import static service.TaskType.*;
 
-public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTasksManager extends InMemoryTaskManager {
 
     DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
@@ -94,7 +94,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 return task;
             } else if ((taskLines[1].trim().equals("EPIC"))) {
                 Epic epic = new Epic(taskLines[2].trim(), taskLines[4].trim(), Integer.parseInt(taskLines[0].trim()),
-                        Status.valueOf(taskLines[3].trim()), taskLines[5].trim(), taskLines[6].trim());
+                        Status.valueOf(taskLines[3].trim()));
                 return epic;
             } else {
                 Subtask subtask = new Subtask(taskLines[2].trim(), taskLines[4].trim(), Integer.parseInt(taskLines[0].trim()),
@@ -131,13 +131,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return stringBuilder.toString();
     }
 
-    private static List<Integer> historyFromString(String value) {
-        List<Integer> history = new ArrayList<>();
-        for (String number : value.split(",")) {
-            history.add(Integer.parseInt(number));
-        }
-        return history;
-    }
 
     public static FileBackedTasksManager loadFromFile(File file) throws IOException {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
@@ -170,44 +163,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void createTask(String name, String description) throws IOException {
-        super.createTask(name, description);
-        saveToFile();
-    }
-
-    @Override
-    public void createTask(String name, String description, String startTime, String duration) throws IOException {
-        super.createTask(name, description, startTime, duration);
-        saveToFile();
-    }
-
-    @Override
     public void createSubTask(Subtask subtask) throws IOException {
         super.createSubTask(subtask);
         saveToFile();
     }
 
     @Override
-    public void createSubTask(String name, String description, String startTime, String duration, Integer parentId) throws IOException {
-        super.createSubTask(name, description, startTime, duration, parentId);
-        saveToFile();
-    }
-
-    @Override
-    public void createSubTask(String name, String description, Integer parentId) throws IOException {
-        super.createSubTask(name, description, parentId);
-        saveToFile();
-    }
-
-    @Override
     public void createEpic(Epic epic) throws IOException {
         super.createEpic(epic);
-        saveToFile();
-    }
-
-    @Override
-    public void createEpic(String name, String description) throws IOException {
-        super.createEpic(name, description);
         saveToFile();
     }
 
@@ -260,11 +223,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public List<Task> getPrioritizedTasks() {
-        return super.getPrioritizedTasks();
-    }
-
-    @Override
     public Task getById(Integer id) throws IOException {
         Task task;
         if (taskStorage.containsKey(id)) {
@@ -285,13 +243,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         FileBackedTasksManager fileBackedTasksManager1 = new FileBackedTasksManager();
 
 
-        fileBackedTasksManager1.createTask("Task_1", "Desk_task_1", "01.05.2023 10:00", "PT10M");
-        fileBackedTasksManager1.createTask("Task_2", "Desk_task_2");
-        fileBackedTasksManager1.createEpic("Epic_1", "Desk_Epic_1");
-        fileBackedTasksManager1.createEpic("Epic_2", "Desk_Epic_2");
-        fileBackedTasksManager1.createSubTask("Sub_1", "Desk_Sub_1", "01.05.2023 10:01", "PT10M", 3);
-        fileBackedTasksManager1.createSubTask("Sub_2", "Desk_Sub_2", 3);
-        fileBackedTasksManager1.createSubTask("Sub_3", "Desk_Sub_3", "01.05.2023 10:02", "PT10M", 3);
+        fileBackedTasksManager1.createTask(new Task("Task_1", "Desk_task_1", fileBackedTasksManager1.idCounter()
+                ,"01.05.2023 10:00", "PT10M"));
+        fileBackedTasksManager1.createTask(new Task("Task_2", "Desk_task_2", fileBackedTasksManager1.idCounter()));
+        fileBackedTasksManager1.createEpic(new Epic("Epic_1", "Desk_Epic_1", fileBackedTasksManager1.idCounter()));
+        fileBackedTasksManager1.createEpic(new Epic("Epic_2", "Desk_Epic_2", fileBackedTasksManager1.idCounter()));
+        fileBackedTasksManager1.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", fileBackedTasksManager1.idCounter(),
+                "01.05.2023 10:00", "PT10M", 3));
+        fileBackedTasksManager1.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", fileBackedTasksManager1.idCounter(), 3));
+        fileBackedTasksManager1.createSubTask(new Subtask("Sub_3", "Desk_Sub_3", fileBackedTasksManager1.idCounter(),
+                "01.05.2023 10:00", "PT10M", 3));
 
         fileBackedTasksManager1.getById(6);
         fileBackedTasksManager1.getById(5);
@@ -334,10 +295,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         fileBackedTasksManager2.inMemoryHistoryManager.getHistory();
         fileBackedTasksManager1.getPrioritizedTasks();
 
-        fileBackedTasksManager2.createTask("Task_3", "Desk_task_3", "01.05.2023 10:03", "PT10M");
-        fileBackedTasksManager2.createSubTask("Subtask_4", "Desk_Subtask_4", "01.05.2023 10:04", "PT20M", 4);
-        fileBackedTasksManager2.createEpic("Epic_3", "Desk_Epic_3");
-        fileBackedTasksManager2.createSubTask("Subtask_5", "Desk_Subtask_5", "01.05.2023 10:05", "PT20M", 4);
+
+
+        fileBackedTasksManager2.createTask(new Task("Task_3", "Desk_task_3", fileBackedTasksManager2.idCounter(),
+                "01.05.2023 10:03", "PT10M"));
+        fileBackedTasksManager2.createSubTask(new Subtask("Subtask_4", "Desk_Subtask_4", fileBackedTasksManager2.idCounter(),
+                "01.05.2023 10:04", "PT20M", 4));
+        fileBackedTasksManager2.createEpic(new Epic("Epic_3", "Desk_Epic_3", fileBackedTasksManager2.idCounter()));
+        fileBackedTasksManager2.createSubTask(new Subtask("Subtask_5", "Desk_Subtask_5", fileBackedTasksManager2.idCounter(),
+                "01.05.2023 10:05", "PT20M", 4));
         fileBackedTasksManager2.getById(9);
         fileBackedTasksManager2.getById(8);
     }

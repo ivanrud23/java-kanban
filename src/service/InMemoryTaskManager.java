@@ -6,23 +6,20 @@ import model.Subtask;
 import model.Task;
 
 import java.io.IOException;
-import java.text.Format;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class InMemoryTaskManager implements TaskManager{
-    Integer idCounter = 1;
+public class InMemoryTaskManager implements TaskManager {
+    Integer idCounter = 0;
     protected HashMap<Integer, Task> taskStorage = new HashMap<>();
     protected HashMap<Integer, Subtask> subTaskStorage = new HashMap<>();
     protected HashMap<Integer, Epic> epicStorage = new HashMap<>();
     protected InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-    protected Set<Task> taskSortByTime = new TreeSet<>(Comparator.comparing(Task::getStartTime));
-    protected List<Task> taskSort = new ArrayList<>();
+    protected Set<Task> taskSortByTime = new TreeSet<>(Comparator.comparing((Task::getStartTime), Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
     protected DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
 
     @Override
     public Task getById(Integer id) throws IOException {
@@ -31,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager{
             task = taskStorage.get(id);
         } else if (subTaskStorage.containsKey(id)) {
             task = subTaskStorage.get(id);
-        } else if (epicStorage.containsKey(id)){
+        } else if (epicStorage.containsKey(id)) {
             task = epicStorage.get(id);
         } else {
             throw new IOException("Введен несуществующий идентификатор");
@@ -64,135 +61,71 @@ public class InMemoryTaskManager implements TaskManager{
         return new ArrayList<>(epicStorage.values());
     }
 
-
     @Override
     public void createTask(Task task) throws IOException {
+        task = checkTaskTime(task);
         taskStorage.put(task.getId(), task);
-        if (task.getStartTime() == null) {
-            taskSort.add(task);
-        } else {
-            taskSortByTime.add(task);
-        }
+        taskSortByTime.add(task);
         if (task.getId() >= idCounter) {
             idCounter = task.getId();
-            idCounterPlus();
         }
     }
 
     @Override
-    public void createTask(String name, String description) throws IOException {
-        Task task = new Task(name, description, idCounter);
-        if (task.getStartTime() == null) {
-            taskSort.add(task);
-        } else {
-            taskSortByTime.add(task);
-        }
-        taskStorage.put(idCounter, task);
-        idCounterPlus();
-    }
-    @Override
-    public void createTask(String name, String description, String startTime, String duration) throws IOException {
-        Task task = new Task(name, description, idCounter, startTime, duration);
-        task = checkTaskTime(task);
-        if (task.getStartTime() == null) {
-            taskSort.add(task);
-        } else {
-            taskSortByTime.add(task);
-        }
-        taskStorage.put(idCounter, task);
-        idCounterPlus();
-    }
-    @Override
-    public void createSubTask(Subtask subtask) throws IOException, NullPointerException {
+    public void createSubTask(Subtask subtask) throws IOException, NullPointerException, NoSuchElementException {
+        subtask = (Subtask) checkTaskTime(subtask);
         subTaskStorage.put(subtask.getId(), subtask);
-        if (subtask.getStartTime() == null) {
-            taskSort.add(subtask);
-        } else {
-            taskSortByTime.add(subtask);
-        }
-        epicStorage.get(subtask.getParentId()).getChildren().add(subtask.getId());
-        if (subtask.getId() >= idCounter) {
-            idCounter = subtask.getId();
-//             epicStorage.get(subtask.getParentId()).getTimeForEpic(subTaskStorage);
-        }
-        idCounterPlus();
-    }
-
-    @Override
-    public void createSubTask(String name, String description, Integer parentId) throws IOException {
-        Subtask subtask = new Subtask(name, description, idCounter, parentId);
-                subTaskStorage.put(idCounter, subtask);
-        if (subtask.getStartTime() == null) {
-            taskSort.add(subtask);
-        } else {
-            taskSortByTime.add(subtask);
-        }
-        addSubTaskToEpic(parentId, idCounter);
-        idCounterPlus();
-    }
-    @Override
-    public void createSubTask(String name, String description, String startTime, String duration, Integer parentId) throws IOException {
-        Subtask subtask = new Subtask(name, description, idCounter, startTime, duration, parentId);
-        subtask = checkSubtaskTime(subtask);
-        subTaskStorage.put(idCounter, subtask);
-        epicStorage.get(parentId).getChildren().add(idCounter);
-        if (subtask.getStartTime() == null) {
-            taskSort.add(subtask);
-        } else {
-            taskSortByTime.add(subtask);
-            Epic parentEpic = epicStorage.get(parentId);
-            LocalDateTime epicStartTime = taskSortByTime.stream()
+        taskSortByTime.add(subtask);
+        Epic parentEpic = epicStorage.get(subtask.getParentId());
+        addSubTaskToEpic(subtask.getParentId(), subtask.getId());
+        LocalDateTime epicStartTime;
+        LocalDateTime epicEndTime;
+        if (subtask.getStartTime() != null) {
+            epicStartTime = taskSortByTime.stream()
                     .filter(task -> parentEpic.getChildren().contains(task.getId()))
+                    .filter(task -> task.getStartTime() != null)
                     .min(Task::compareByStartTime)
                     .get().getStartTime();
-            LocalDateTime epicEndTime = taskSortByTime.stream()
+
+            epicEndTime = taskSortByTime.stream()
                     .filter(task -> parentEpic.getChildren().contains(task.getId()))
+                    .filter(task -> task.getStartTime() != null)
                     .max(Task::compareByEndTime)
                     .get().getEndTime();
+
             Duration epicDuration;
             if (parentEpic.getChildren().size() > 1) {
                 epicDuration = Duration.between(epicStartTime, epicEndTime);
             } else {
-                epicDuration = Duration.parse(duration);
+                epicDuration = subtask.getDuration();
             }
-
             Epic newEpic = new Epic(parentEpic.getName(), parentEpic.getDescription(), parentEpic.getId(),
                     parentEpic.getStatus(), epicStartTime.format(inputFormat), epicDuration.toString(), parentEpic.getChildren());
-            updateEpic(parentId, newEpic);
-
+            updateEpic(parentEpic.getId(), newEpic);
         }
-
-        idCounterPlus();
+        if (subtask.getId() >= idCounter) {
+            idCounter = subtask.getId();
+        }
     }
 
     @Override
     public void createEpic(Epic epic) throws IOException {
         epicStorage.put(epic.getId(), epic);
-        if (epic.getStartTime() == null) {
-            taskSort.add(epic);
-        } else {
-            taskSortByTime.add(epic);
-        }
+        taskSortByTime.add(epic);
         if (epic.getId() >= idCounter) {
             idCounter = epic.getId();
         }
     }
 
     @Override
-    public void createEpic(String name, String description) throws IOException {
-        Epic epic = new Epic(name, description, idCounter);
-        epicStorage.put(idCounter, epic);
-        if (epic.getStartTime() == null) {
-            taskSort.add(epic);
-        } else {
-            taskSortByTime.add(epic);
-        }
-        idCounterPlus();
+    public void idCounterPlus() {
+        idCounter++;
     }
 
     @Override
-    public void idCounterPlus() {
+    public Integer idCounter() {
         idCounter++;
+        return idCounter;
     }
 
     @Override
@@ -239,58 +172,53 @@ public class InMemoryTaskManager implements TaskManager{
 
     public List<Task> getPrioritizedTasks() {
         List<Task> finalList = new ArrayList<>(taskSortByTime);
-        finalList.addAll(taskSort);
-//        System.out.println("Приоретизированный список задач");
-//        for (Task task : finalList) {
-//            if (task.getClass().getName().equals("model.Epic")) {
-//                Epic epicTask = (Epic) task;
-//                System.out.println("Идентификатор — " + epicTask.getId());
-//                System.out.println("Название — " + epicTask.getName());
-//                System.out.println("Описание — " + epicTask.getDescription());
-//                System.out.println("Статус — " + epicTask.getStatus());
-//                System.out.println("Подзадачи — " + epicTask.getChildren());
-//                System.out.println();
-//            } else if (task.getClass().getName().equals("model.Task")) {
-//                System.out.println("Идентификатор — " + task.getId());
-//                System.out.println("Название — " + task.getName());
-//                System.out.println("Описание — " + task.getDescription());
-//                System.out.println("Статус — " + task.getStatus());
-//                System.out.println();
-//            } else {
-//                Subtask subTaskTask = (Subtask) task;
-//                System.out.println("Идентификатор — " + subTaskTask.getId());
-//                System.out.println("Название — " + subTaskTask.getName());
-//                System.out.println("Описание — " + subTaskTask.getDescription());
-//                System.out.println("Статус — " + subTaskTask.getStatus());
-//                System.out.println("Родительский эпик — " + subTaskTask.getParentId());
-//                System.out.println();
-//            }
-//        }
+        System.out.println("Приоретизированный список задач");
+        for (Task task : finalList) {
+            if (task.getClass().getName().equals("model.Epic")) {
+                Epic epicTask = (Epic) task;
+                System.out.println("Идентификатор — " + epicTask.getId());
+                System.out.println("Название — " + epicTask.getName());
+                System.out.println("Описание — " + epicTask.getDescription());
+                System.out.println("Статус — " + epicTask.getStatus());
+                System.out.println("Подзадачи — " + epicTask.getChildren());
+                System.out.println("StartTime — " + epicTask.getStartTime());
+                System.out.println("EndTime — " + epicTask.getEndTime());
+                System.out.println();
+            } else if (task.getClass().getName().equals("model.Task")) {
+                System.out.println("Идентификатор — " + task.getId());
+                System.out.println("Название — " + task.getName());
+                System.out.println("Описание — " + task.getDescription());
+                System.out.println("Статус — " + task.getStatus());
+                System.out.println("StartTime — " + task.getStartTime());
+                System.out.println("EndTime — " + task.getEndTime());
+                System.out.println();
+            } else {
+                Subtask subTaskTask = (Subtask) task;
+                System.out.println("Идентификатор — " + subTaskTask.getId());
+                System.out.println("Название — " + subTaskTask.getName());
+                System.out.println("Описание — " + subTaskTask.getDescription());
+                System.out.println("Статус — " + subTaskTask.getStatus());
+                System.out.println("Родительский эпик — " + subTaskTask.getParentId());
+                System.out.println("StartTime — " + subTaskTask.getStartTime());
+                System.out.println("EndTime — " + subTaskTask.getEndTime());
+                System.out.println();
+            }
+        }
         return finalList;
     }
 
     public Task checkTaskTime(Task taskCheck) {
-        List<Task> prioritizedTasks = new ArrayList<>(taskSortByTime);
-        for (Task task : prioritizedTasks) {
-            if ((taskCheck.getStartTime().isAfter(task.getStartTime()) || taskCheck.getStartTime().equals(task.getStartTime()))
-            && taskCheck.getStartTime().isBefore(task.getEndTime())) {
-                taskCheck.setStartTime(task.getEndTime());
+        if (taskSortByTime != null) {
+            for (Task task : taskSortByTime) {
+                if ((taskCheck.getStartTime() != null && task.getStartTime() != null)
+                        && (taskCheck.getStartTime().isAfter(task.getStartTime()) || taskCheck.getStartTime().equals(task.getStartTime()))
+                        && (taskCheck.getStartTime().isBefore(task.getEndTime()))) {
+                    taskCheck.setStartTime(task.getEndTime());
+                }
             }
         }
         return taskCheck;
     }
-
-    public Subtask checkSubtaskTime(Subtask taskCheck) {
-        List<Task> prioritizedTasks = new ArrayList<>(taskSortByTime);
-        for (Task task : prioritizedTasks) {
-            if ((taskCheck.getStartTime().isAfter(task.getStartTime()) || taskCheck.getStartTime().equals(task.getStartTime()))
-                    && taskCheck.getStartTime().isBefore(task.getEndTime())) {
-                taskCheck.setStartTime(task.getEndTime());
-            }
-        }
-        return taskCheck;
-    }
-
 
     @Override
     public void updateTask(Integer id, Task newTask) throws IOException {
@@ -320,11 +248,6 @@ public class InMemoryTaskManager implements TaskManager{
             newEpic.setChildren(childId);
             newEpic.setId(id);
             epicStorage.put(id, newEpic);
-            if (newEpic.getStartTime() == null) {
-                taskSort.add(newEpic);
-            } else {
-                taskSortByTime.add(newEpic);
-            }
         }
 
     }
@@ -370,9 +293,9 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     public void sortRemove(Integer id) {
-        taskSort.removeIf(task -> Objects.equals(task.getId(), id));
         taskSortByTime.removeIf(task -> Objects.equals(task.getId(), id));
     }
+
     @Override
     public void clearSubtask() throws IOException {
         for (Epic epic : epicStorage.values()) {
@@ -385,7 +308,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void clearTask() throws IOException {
         for (Task task : taskStorage.values()) {
-            taskSort.remove(task);
+            taskSortByTime.remove(task);
         }
         taskStorage.clear();
     }
@@ -393,7 +316,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void clearEpic() throws IOException {
         for (Epic epic : epicStorage.values()) {
-            taskSort.remove(epic);
+            taskSortByTime.remove(epic);
         }
         epicStorage.clear();
         subTaskStorage.clear();

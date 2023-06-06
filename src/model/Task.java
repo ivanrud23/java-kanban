@@ -55,7 +55,7 @@ public class Task {
         if (startTime == null) {
             return null;
         }
-        setEndTime(startTime.plus(duration));
+        this.setEndTime(startTime.plus(duration));
         return endTime;
     }
 
@@ -107,7 +107,7 @@ public class Task {
         this.duration = duration;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDateTime getStartTime() throws NullPointerException{
         return startTime;
     }
 
@@ -122,6 +122,7 @@ public class Task {
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
+
 
     @Override
     public String toString() {
