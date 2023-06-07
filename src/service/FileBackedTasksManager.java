@@ -8,8 +8,7 @@ import model.Task;
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import static service.TaskType.*;
 
@@ -127,7 +126,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         if (!String.valueOf(stringBuilder).isEmpty()){
              stringBuilder.deleteCharAt(stringBuilder.length() -1);
          }
-
         return stringBuilder.toString();
     }
 
@@ -242,14 +240,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) throws IOException {
         FileBackedTasksManager fileBackedTasksManager1 = new FileBackedTasksManager();
 
-
         fileBackedTasksManager1.createTask(new Task("Task_1", "Desk_task_1"
                 ,"01.05.2023 10:00", "PT10M"));
         fileBackedTasksManager1.createTask(new Task("Task_2", "Desk_task_2"));
         fileBackedTasksManager1.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         fileBackedTasksManager1.createEpic(new Epic("Epic_2", "Desk_Epic_2"));
         fileBackedTasksManager1.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
-                "01.05.2023 10:00", "PT10M", 3));
+                "01.05.2023 10:20", "PT10M", 3));
         fileBackedTasksManager1.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 3));
         fileBackedTasksManager1.createSubTask(new Subtask("Sub_3", "Desk_Sub_3",
                 "01.05.2023 10:00", "PT10M", 3));
@@ -298,12 +295,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
         fileBackedTasksManager2.createTask(new Task("Task_3", "Desk_task_3",
-                "01.05.2023 10:03", "PT10M"));
+                "01.05.2023 10:30", "PT10M"));
         fileBackedTasksManager2.createSubTask(new Subtask("Subtask_4", "Desk_Subtask_4",
-                "01.05.2023 10:04", "PT20M", 4));
+                "01.05.2023 10:40", "PT20M", 4));
         fileBackedTasksManager2.createEpic(new Epic("Epic_3", "Desk_Epic_3"));
         fileBackedTasksManager2.createSubTask(new Subtask("Subtask_5", "Desk_Subtask_5",
-                "01.05.2023 10:05", "PT20M", 4));
+                "01.05.2023 10:50", "PT20M", 4));
         fileBackedTasksManager2.getById(9);
         fileBackedTasksManager2.getById(8);
     }

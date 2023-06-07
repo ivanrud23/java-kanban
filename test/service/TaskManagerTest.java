@@ -9,6 +9,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,11 +43,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getTaskStorageTest() throws IOException {
-
-       assertThrows(
-                IOException.class,
-                () ->taskManager.getTaskStorage());
-
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         Task task = new Task("Task_1", "Desk_task_1", 1);
         List<Task> taskList = new ArrayList<>(List.of(task));
@@ -55,9 +51,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSubTaskStorageTest() throws IOException {
-        assertThrows(
-                IOException.class,
-                () -> taskManager.getTaskStorage());
 
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
@@ -240,10 +233,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(new Task("Task_2", "Desk_task_2"));
         taskManager.createTask(new Task("Task_3", "Desk_task_3"));
         taskManager.clearTask();
-
-        assertThrows(
-                IOException.class,
-                () -> taskManager.getTaskStorage());
+        List<Task> taskStorage = new ArrayList<>();
+        assertEquals(taskStorage, taskManager.getTaskStorage());
     }
 
     @Test

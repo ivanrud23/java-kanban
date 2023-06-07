@@ -39,9 +39,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getTaskStorage() throws IOException {
-        if (taskStorage.values().isEmpty()) {
-            throw new IOException("Нет ни одной задачи");
-        }
         return new ArrayList<>(taskStorage.values());
     }
 
@@ -63,12 +60,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createTask(Task task) throws IOException {
-        if (task.getId() == null) {
-            task.setId(idCounter());
-        }
-        checkTaskTime(task);
+        task.setId(idCounter());
         taskStorage.put(task.getId(), task);
-        taskSortByTime.add(task);
+        if (checkTaskTime(task)) {
+            taskSortByTime.add(task);
+        }
         if (task.getId() >= idCounter) {
             idCounter = task.getId();
         }
@@ -76,38 +72,40 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createSubTask(Subtask subtask) throws IOException, NullPointerException, NoSuchElementException {
-        if (subtask.getId() == null) {
-            subtask.setId(idCounter());
-        }
-        checkTaskTime(subtask);
+        subtask.setId(idCounter());
         subTaskStorage.put(subtask.getId(), subtask);
-        taskSortByTime.add(subtask);
+        if (checkTaskTime(subtask)) {
+            taskSortByTime.add(subtask);
+        }
         Epic parentEpic = epicStorage.get(subtask.getParentId());
         addSubTaskToEpic(subtask.getParentId(), subtask.getId());
         LocalDateTime epicStartTime;
         LocalDateTime epicEndTime;
         if (subtask.getStartTime() != null) {
-            epicStartTime = taskSortByTime.stream()
-                    .filter(task -> parentEpic.getChildren().contains(task.getId()))
-                    .filter(task -> task.getStartTime() != null)
-                    .min(Task::compareByStartTime)
-                    .get().getStartTime();
-
-            epicEndTime = taskSortByTime.stream()
-                    .filter(task -> parentEpic.getChildren().contains(task.getId()))
-                    .filter(task -> task.getStartTime() != null)
-                    .max(Task::compareByEndTime)
-                    .get().getEndTime();
-
+            if (parentEpic.getChildren().size() > 1) {
+                epicStartTime = taskSortByTime.stream()
+                        .filter(task -> parentEpic.getChildren().contains(task.getId()))
+                        .filter(task -> task.getStartTime() != null)
+                        .min(Task::compareByStartTime)
+                        .get().getStartTime();
+                epicEndTime = taskSortByTime.stream()
+                        .filter(task -> parentEpic.getChildren().contains(task.getId()))
+                        .filter(task -> task.getStartTime() != null)
+                        .max(Task::compareByEndTime)
+                        .get().getEndTime();
+            } else {
+                epicStartTime = subtask.getStartTime();
+                epicEndTime = subtask.getEndTime();
+            }
             Duration epicDuration;
             if (parentEpic.getChildren().size() > 1) {
                 epicDuration = Duration.between(epicStartTime, epicEndTime);
             } else {
                 epicDuration = subtask.getDuration();
             }
-            Epic newEpic = new Epic(parentEpic.getName(), parentEpic.getDescription(), parentEpic.getId(),
-                    parentEpic.getStatus(), epicStartTime.format(inputFormat), epicDuration.toString(), parentEpic.getChildren());
-            updateEpic(parentEpic.getId(), newEpic);
+
+            parentEpic.setStartTime(epicStartTime);
+            parentEpic.setDuration(epicDuration);
         }
         if (subtask.getId() >= idCounter) {
             idCounter = subtask.getId();
@@ -120,7 +118,9 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setId(idCounter());
         }
         epicStorage.put(epic.getId(), epic);
-        taskSortByTime.add(epic);
+        if (checkTaskTime(epic)) {
+            taskSortByTime.add(epic);
+        }
         if (epic.getId() >= idCounter) {
             idCounter = epic.getId();
         }
@@ -217,17 +217,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public Boolean checkTaskTime(Task taskCheck) {
+        boolean flag = true;
         if (taskSortByTime != null) {
             for (Task task : taskSortByTime) {
-                if ((taskCheck.getStartTime() != null && task.getStartTime() != null)
-                        && (taskCheck.getStartTime().isAfter(task.getStartTime()) || taskCheck.getStartTime().equals(task.getStartTime()))
-                        && (taskCheck.getStartTime().isBefore(task.getEndTime()))) {
-                    taskCheck.setStartTime(task.getEndTime());
+                if (taskCheck.getStartTime() != null && task.getStartTime() != null) {
+                    if (taskCheck.getEndTime().isAfter(task.getStartTime())
+                            && taskCheck.getEndTime().isBefore(task.getEndTime())) {
+                        flag = false;
+                        break;
+                    } else if (taskCheck.getStartTime().isAfter(task.getStartTime())
+                            && taskCheck.getStartTime().isBefore(task.getEndTime())) {
+                        flag = false;
+                        break;
+                    } else if (taskCheck.getStartTime().isEqual(task.getStartTime())
+                            && taskCheck.getEndTime().isEqual(task.getEndTime())) {
+                        flag = false;
+                        break;
+                    } else {
+                        flag = true;
+                        break;
+                    }
                 }
             }
-            return true;
         }
-        return false;
+        return flag;
     }
 
     @Override

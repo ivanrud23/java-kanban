@@ -92,10 +92,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
                 "01.05.2023 10:00", "PT10M", 3));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 3));
         taskManager.createSubTask(new Subtask("Sub_3", "Desk_Sub_3",
-                "01.05.2023 10:00", "PT10M", 3));
+                "01.05.2023 10:20", "PT10M", 3));
         List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
         List<Task> listOfTask = new ArrayList<>(List.of(taskManager.getById(1),
-                taskManager.getById(5),
                 taskManager.getById(7),
                 taskManager.getById(2),
                 taskManager.getById(3),
