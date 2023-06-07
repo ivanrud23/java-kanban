@@ -19,17 +19,20 @@ public class Task {
     protected DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
+    public Task(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     public Task(String name, String description, Integer id) {
         this.name = name;
         this.description = description;
         this.id = id;
-
     }
 
-    public Task(String name, String description, Integer id, String startTime, String duration) {
+    public Task(String name, String description, String startTime, String duration) {
         this.name = name;
         this.description = description;
-        this.id = id;
         this.startTime = LocalDateTime.parse(startTime, inputFormat);
         this.duration = Duration.parse(duration);
     }

@@ -6,6 +6,11 @@ public class Subtask extends Task {
     private Integer parentId;
 //    protected LocalDate
 
+
+    public Subtask(String name, String description, Integer parentId) {
+        super(name, description);
+        this.parentId = parentId;
+    }
     public Subtask(String name, String description, Integer id, Integer parentId) {
         super(name, description, id);
         this.parentId = parentId;
@@ -14,8 +19,8 @@ public class Subtask extends Task {
         super(name, description, id, status);
         this.parentId = parentId;
     }
-    public Subtask(String name, String description, Integer id, String startTime, String duration, Integer parentId) {
-        super(name, description, id, startTime, duration);
+    public Subtask(String name, String description, String startTime, String duration, Integer parentId) {
+        super(name, description, startTime, duration);
         this.parentId = parentId;
     }
     public Subtask(String name, String description, Integer id, Status status, String startTime, String duration, Integer parentId) {

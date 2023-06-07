@@ -63,6 +63,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createTask(Task task) throws IOException {
+        if (task.getId() == null) {
+            task.setId(idCounter());
+        }
         checkTaskTime(task);
         taskStorage.put(task.getId(), task);
         taskSortByTime.add(task);
@@ -73,6 +76,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createSubTask(Subtask subtask) throws IOException, NullPointerException, NoSuchElementException {
+        if (subtask.getId() == null) {
+            subtask.setId(idCounter());
+        }
         checkTaskTime(subtask);
         subTaskStorage.put(subtask.getId(), subtask);
         taskSortByTime.add(subtask);
@@ -110,6 +116,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createEpic(Epic epic) throws IOException {
+        if (epic.getId() == null) {
+            epic.setId(idCounter());
+        }
         epicStorage.put(epic.getId(), epic);
         taskSortByTime.add(epic);
         if (epic.getId() >= idCounter) {
