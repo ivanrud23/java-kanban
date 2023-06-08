@@ -1,8 +1,8 @@
 1, TASK, Task_1, NEW, Desk_task_1, 01.05.2023 10:00, PT10M,
 8, TASK, Task_3, NEW, Desk_task_3, 01.05.2023 10:30, PT10M,
-4, EPIC, Epic_2, NEW, Desk_Epic_2, 01.05.2023 10:40, PT30M,
+4, EPIC, Epic_2, NEW, Desk_Epic_2, 01.05.2023 10:40, PT40M,
 10, EPIC, Epic_3, NEW, Desk_Epic_3,
 9, SUBTASK, Subtask_4, NEW, Desk_Subtask_4, 01.05.2023 10:40, PT20M, 4,
-11, SUBTASK, Subtask_5, NEW, Desk_Subtask_5, 01.05.2023 10:50, PT20M, 4
+11, SUBTASK, Subtask_5, NEW, Desk_Subtask_5, 01.05.2023 11:00, PT20M, 4
 
 4,1,9,8

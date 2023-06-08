@@ -5,14 +5,13 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 abstract class TaskManagerTest<T extends TaskManager> {
 
@@ -51,7 +50,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSubTaskStorageTest() throws IOException {
-
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
 
@@ -62,10 +60,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getEpicStorageTest() throws IOException {
-        assertThrows(
-                IOException.class,
-                () -> taskManager.getEpicStorage());
-
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));
 
@@ -90,7 +84,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void createTaskWithTime() throws IOException {
-        taskManager.createTask(new Task("Task_1", "Desk_task_1","01.05.2023 10:00", "PT10M"));
+        taskManager.createTask(new Task("Task_1", "Desk_task_1", "01.05.2023 10:00", "PT10M"));
         assertEquals(new Task("Task_1", "Desk_task_1", 1, Status.NEW, "01.05.2023 10:00", "PT10M"), taskManager.getById(1));
     }
 
@@ -100,26 +94,29 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, 1), taskManager.getById(2));
     }
+
     @Test
     void createSubtaskFromSubtask() throws IOException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, 1));
         assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, 1), taskManager.getById(2));
     }
+
     @Test
     void createSubtaskWithTime() throws IOException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
-        assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, "01.05.2023 10:00","PT10M",1), taskManager.getById(2));
+        assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, "01.05.2023 10:00", "PT10M", 1), taskManager.getById(2));
     }
+
     @Test
     void epicGetSubtaskTime() throws IOException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
         List<Integer> children = new ArrayList<>(List.of(2));
-        assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW, "01.05.2023 10:00","PT10M", children), taskManager.getById(1));
+        assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW, "01.05.2023 10:00", "PT10M", children), taskManager.getById(1));
     }
 
     @Test
@@ -132,8 +129,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
         List<Integer> children = new ArrayList<>(List.of(2, 3, 4));
-        assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW, "01.05.2023 10:00","PT10M", children), taskManager.getById(1));
+        assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW, "01.05.2023 10:00", "PT10M", children), taskManager.getById(1));
     }
+
     @Test
     void checkTimeIntersections() throws IOException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
@@ -143,7 +141,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 "01.05.2023 10:00", "PT10M", 1));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
-        assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, "01.05.2023 10:30","PT10M",1), taskManager.getById(2));
+        assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, "01.05.2023 10:30", "PT10M", 1), taskManager.getById(2));
     }
 
     @Test
@@ -151,6 +149,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW), taskManager.getById(1));
     }
+
     @Test
     void createEpicFromEpic() throws IOException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW));
@@ -198,7 +197,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         List<Integer> children = new ArrayList<>(List.of(2));
         Epic epic = new Epic("Epic_1_update", "Desk_Epic_1_update", 1, Status.NEW, children);
         epic.setChildren(children);
-        assertEquals(epic.getChildren(),((Epic) taskManager.getById(1)).getChildren());
+        assertEquals(epic.getChildren(), ((Epic) taskManager.getById(1)).getChildren());
     }
 
 
@@ -243,10 +242,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(new Epic("Epic_2", "Desk_Epic_2"));
         taskManager.createEpic(new Epic("Epic_3", "Desk_Epic_3"));
         taskManager.clearEpic();
-
-        assertThrows(
-                IOException.class,
-                () -> taskManager.getEpicStorage());
+        List<Task> taskStorage = new ArrayList<>();
+        assertEquals(taskStorage, taskManager.getEpicStorage());
     }
 
     @Test

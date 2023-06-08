@@ -43,18 +43,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getSubTaskStorage() throws IOException {
-        if (subTaskStorage.values().isEmpty()) {
-            throw new IOException("Нет ни одной подзадачи");
-        }
+    public List<Task> getSubTaskStorage() {
         return new ArrayList<>(subTaskStorage.values());
     }
 
     @Override
-    public List<Task> getEpicStorage() throws IOException {
-        if (epicStorage.values().isEmpty()) {
-            throw new IOException("Нет ни одного эпика");
-        }
+    public List<Task> getEpicStorage() {
         return new ArrayList<>(epicStorage.values());
     }
 
@@ -64,9 +58,6 @@ public class InMemoryTaskManager implements TaskManager {
         taskStorage.put(task.getId(), task);
         if (checkTaskTime(task)) {
             taskSortByTime.add(task);
-        }
-        if (task.getId() >= idCounter) {
-            idCounter = task.getId();
         }
     }
 
@@ -107,9 +98,6 @@ public class InMemoryTaskManager implements TaskManager {
             parentEpic.setStartTime(epicStartTime);
             parentEpic.setDuration(epicDuration);
         }
-        if (subtask.getId() >= idCounter) {
-            idCounter = subtask.getId();
-        }
     }
 
     @Override
@@ -120,9 +108,6 @@ public class InMemoryTaskManager implements TaskManager {
         epicStorage.put(epic.getId(), epic);
         if (checkTaskTime(epic)) {
             taskSortByTime.add(epic);
-        }
-        if (epic.getId() >= idCounter) {
-            idCounter = epic.getId();
         }
     }
 

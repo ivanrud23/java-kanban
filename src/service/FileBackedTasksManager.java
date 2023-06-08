@@ -86,6 +86,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private Task fromString(String value) throws IOException, ArrayIndexOutOfBoundsException {
         String[] taskLines = value.split(",");
+        if (Integer.parseInt(taskLines[0].trim()) > idCounter) {
+            idCounter = Integer.parseInt(taskLines[0].trim());
+        }
         if (taskLines.length > 6) {
             if (taskLines[1].trim().equals("TASK")) {
                 Task task = new Task(taskLines[2].trim(), taskLines[4].trim(), Integer.parseInt(taskLines[0].trim()),
@@ -138,11 +141,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String line = br.readLine();
             if (!line.isEmpty()) {
                 if (line.split(",")[1].trim().equals("TASK")) {
-                    fileBackedTasksManager.createTask(fileBackedTasksManager.fromString(line));
+//                    fileBackedTasksManager.createTask(fileBackedTasksManager.fromString(line));
+                    Task task = fileBackedTasksManager.fromString(line);
+                    fileBackedTasksManager.taskStorage.put(task.getId(), task);
+                    if (fileBackedTasksManager.checkTaskTime(task)) {
+                        fileBackedTasksManager.taskSortByTime.add(task);
+                    }
                 } else if (line.split(",")[1].trim().equals("SUBTASK")) {
-                    fileBackedTasksManager.createSubTask((Subtask) fileBackedTasksManager.fromString(line));
+                    Subtask subtask = (Subtask) fileBackedTasksManager.fromString(line);
+                    fileBackedTasksManager.subTaskStorage.put(subtask.getId(), subtask);
+                    if (fileBackedTasksManager.checkTaskTime(subtask)) {
+                        fileBackedTasksManager.taskSortByTime.add(subtask);
+                    }
+                    fileBackedTasksManager.addSubTaskToEpic(subtask.getParentId(), subtask.getId());
                 } else if (line.split(",")[1].trim().equals("EPIC")) {
-                    fileBackedTasksManager.createEpic((Epic) fileBackedTasksManager.fromString(line));
+                    Epic epic = (Epic) fileBackedTasksManager.fromString(line);
+                    fileBackedTasksManager.epicStorage.put(epic.getId(), epic);
+                    if (fileBackedTasksManager.checkTaskTime(epic)) {
+                        fileBackedTasksManager.taskSortByTime.add(epic);
+                    }
                 } else {
                     String[] taskLines = line.split(",");
                     for (String id : taskLines) {
@@ -292,15 +309,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager2.inMemoryHistoryManager.getHistory();
         fileBackedTasksManager1.getPrioritizedTasks();
 
-
-
         fileBackedTasksManager2.createTask(new Task("Task_3", "Desk_task_3",
                 "01.05.2023 10:30", "PT10M"));
         fileBackedTasksManager2.createSubTask(new Subtask("Subtask_4", "Desk_Subtask_4",
                 "01.05.2023 10:40", "PT20M", 4));
         fileBackedTasksManager2.createEpic(new Epic("Epic_3", "Desk_Epic_3"));
         fileBackedTasksManager2.createSubTask(new Subtask("Subtask_5", "Desk_Subtask_5",
-                "01.05.2023 10:50", "PT20M", 4));
+                "01.05.2023 11:00", "PT20M", 4));
         fileBackedTasksManager2.getById(9);
         fileBackedTasksManager2.getById(8);
     }
