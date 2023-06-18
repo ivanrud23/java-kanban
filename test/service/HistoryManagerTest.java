@@ -34,7 +34,7 @@ class HistoryManagerTest {
         assertEquals(history, inMemoryTaskManager.inMemoryHistoryManager.getHistory());
     }
     @Test
-    void doubleTaskTest() throws IOException {
+    void doubleTaskTest() throws IOException, InterruptedException {
         Task task1 =  new Task("Task_1", "Desk_task_1", 1);
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);
@@ -55,7 +55,7 @@ class HistoryManagerTest {
         assertEquals(history, inMemoryTaskManager.inMemoryHistoryManager.getHistory());
     }
     @Test
-    void deleteFromStartHistory() throws IOException {
+    void deleteFromStartHistory() throws IOException, InterruptedException {
         Task task1 =  new Task("Task_1", "Desk_task_1", 1);
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);
@@ -77,7 +77,7 @@ class HistoryManagerTest {
         assertEquals(history, inMemoryTaskManager.inMemoryHistoryManager.getHistory());
     }
     @Test
-    void deleteFromMiddleHistory() throws IOException {
+    void deleteFromMiddleHistory() throws IOException, InterruptedException {
         Task task1 =  new Task("Task_1", "Desk_task_1", 1);
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);
@@ -99,7 +99,7 @@ class HistoryManagerTest {
         assertEquals(history, inMemoryTaskManager.inMemoryHistoryManager.getHistory());
     }
     @Test
-    void deleteFromEndHistory() throws IOException {
+    void deleteFromEndHistory() throws IOException, InterruptedException {
         Task task1 =  new Task("Task_1", "Desk_task_1", 1);
         Task task2 =  new Task("Task_2", "Desk_task_2", 2);
         Task task3 =  new Task("Task_3", "Desk_task_3", 3);

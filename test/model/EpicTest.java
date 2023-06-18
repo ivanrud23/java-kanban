@@ -15,7 +15,7 @@ class EpicTest {
     InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
     @AfterEach
-    void createInMemoryTaskManager() throws IOException {
+    void createInMemoryTaskManager() throws IOException, InterruptedException {
         inMemoryTaskManager.clearTask();
         inMemoryTaskManager.clearEpic();
         inMemoryTaskManager.clearSubtask();
@@ -23,13 +23,13 @@ class EpicTest {
 
 
     @Test
-    void EpicStatusNewWithEmptySubtask() throws IOException {
+    void EpicStatusNewWithEmptySubtask() throws IOException, InterruptedException {
         inMemoryTaskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         assertEquals(Status.NEW, inMemoryTaskManager.getById(1).getStatus());
     }
 
     @Test
-    void EpicStatusNewWithSubtaskStatusNew() throws IOException {
+    void EpicStatusNewWithSubtaskStatusNew() throws IOException, InterruptedException {
         inMemoryTaskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         inMemoryTaskManager.createEpic(new Epic("Epic_2", "Desk_Epic_2"));
         inMemoryTaskManager.createEpic(new Epic("Epic_3", "Desk_Epic_3"));
@@ -37,7 +37,7 @@ class EpicTest {
     }
 
     @Test
-    void EpicStatusDoneWithSubtaskStatusDone() throws IOException {
+    void EpicStatusDoneWithSubtaskStatusDone() throws IOException, InterruptedException {
         inMemoryTaskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         inMemoryTaskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         inMemoryTaskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));
@@ -53,7 +53,7 @@ class EpicTest {
     }
 
     @Test
-    void EpicStatusInProgressWithSubtaskStatusNewAndDone() throws IOException {
+    void EpicStatusInProgressWithSubtaskStatusNewAndDone() throws IOException, InterruptedException {
         inMemoryTaskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         inMemoryTaskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         inMemoryTaskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));
@@ -65,7 +65,7 @@ class EpicTest {
     }
 
     @Test
-    void EpicStatusInProgressWithSubtaskStatusInProgress() throws IOException {
+    void EpicStatusInProgressWithSubtaskStatusInProgress() throws IOException, InterruptedException {
         inMemoryTaskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         inMemoryTaskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         inMemoryTaskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));

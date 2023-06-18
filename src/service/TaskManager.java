@@ -1,18 +1,15 @@
 package service;
 
 import model.Epic;
-import model.Status;
 import model.Subtask;
 import model.Task;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.util.HashMap;
 import java.util.List;
 
 public interface TaskManager {
 
-    Task getById(Integer id) throws IOException;
+    Task getById(Integer id) throws IOException, InterruptedException;
 
     public List<Task> getTaskStorage() throws IOException;
 
@@ -20,22 +17,11 @@ public interface TaskManager {
 
     public List<Task> getEpicStorage() throws IOException;
 
+    void createTask(Task task) throws IOException, InterruptedException;
 
-    void createTask(Task task) throws IOException;
+    void createSubTask(Subtask subtask) throws IOException, InterruptedException;
 
-//    void createTask(String name, String description) throws IOException;
-//
-//    void createTask(String name, String description, String startTime, String duration) throws IOException;
-
-    void createSubTask(Subtask subtask) throws IOException;
-
-//    void createSubTask(String name, String description, String startTime, String duration, Integer parentId) throws IOException;
-//
-//    void createSubTask(String name, String description, Integer parentId) throws IOException;
-
-    public void createEpic(Epic epic) throws IOException;
-
-//    void createEpic(String name, String description) throws IOException;
+    public void createEpic(Epic epic) throws IOException, InterruptedException;
 
     public void idCounterPlus();
 
@@ -49,21 +35,21 @@ public interface TaskManager {
 
     public void printEpic();
 
-    public void updateTask(Integer id, Task newTask) throws IOException;
+    public void updateTask(Integer id, Task newTask) throws IOException, InterruptedException;
 
-    public void updateSubTask(Integer id, Subtask newSubTask) throws IOException;
+    public void updateSubTask(Integer id, Subtask newSubTask) throws IOException, InterruptedException;
 
-    public void updateEpic(Integer id, Epic newEpic) throws IOException;
+    public void updateEpic(Integer id, Epic newEpic) throws IOException, InterruptedException;
 
-    public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException;
+    public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException, InterruptedException;
 
-    public void removeTask(Integer id) throws IOException;
+    public void removeTask(Integer id) throws IOException, InterruptedException;
 
-    public void clearSubtask() throws IOException;
+    public void clearSubtask() throws IOException, InterruptedException;
 
-    public void clearTask() throws IOException;
+    public void clearTask() throws IOException, InterruptedException;
 
-    public void clearEpic() throws IOException;
+    public void clearEpic() throws IOException, InterruptedException;
 
     public void checkEpicStatus(Integer id);
 

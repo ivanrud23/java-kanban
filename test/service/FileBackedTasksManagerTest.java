@@ -21,7 +21,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     }
 
     @Test
-    void saveToFileTask() throws IOException {
+    void saveToFileTask() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"
                 ,"01.05.2023 10:00", "PT10M"));
         File file = new File("history.csv");
@@ -31,7 +31,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals("1, TASK, Task_1, NEW, Desk_task_1, 01.05.2023 10:00, PT10M", taskString);
     }
     @Test
-    void saveToFileSubtask() throws IOException {
+    void saveToFileSubtask() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
@@ -48,7 +48,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals("2, SUBTASK, Sub_1, NEW, Desk_Sub_1, 01.05.2023 10:00, PT10M, 1", listStringOfTask.get(1));
     }
     @Test
-    void saveToFileEpic() throws IOException {
+    void saveToFileEpic() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         File file = new File("history.csv");
         Reader fileReader = new FileReader(file);
@@ -58,7 +58,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     }
 
     @Test
-    void loadFromFileTask() throws IOException {
+    void loadFromFileTask() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"
                 ,"01.05.2023 10:00", "PT10M"));
         File file = new File("history.csv");
@@ -66,7 +66,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals(new Task("Task_1", "Desk_task_1", 1, Status.NEW, "01.05.2023 10:00", "PT10M"), fileBackedTasksManager.getById(1));
     }
     @Test
-    void loadFromFileSubtask() throws IOException {
+    void loadFromFileSubtask() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
@@ -75,14 +75,14 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, "01.05.2023 10:00", "PT10M", 1), fileBackedTasksManager.getById(2));
     }
     @Test
-    void loadFromFileEpic() throws IOException {
+    void loadFromFileEpic() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         File file = new File("history.csv");
         FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
         assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1), fileBackedTasksManager.getById(1));
     }
     @Test
-    void getPrioritizedTasks() throws IOException {
+    void getPrioritizedTasks() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"
                 ,"01.05.2023 10:00", "PT10M"));
         taskManager.createTask(new Task("Task_2", "Desk_task_2"));

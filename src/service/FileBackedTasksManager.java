@@ -133,7 +133,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    public static FileBackedTasksManager loadFromFile(File file) throws IOException {
+    public static FileBackedTasksManager loadFromFile(File file) throws IOException, InterruptedException {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
         Reader fileReader = new FileReader(file);
         BufferedReader br = new BufferedReader(fileReader);
@@ -172,73 +172,73 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task task) throws IOException {
+    public void createTask(Task task) throws IOException, InterruptedException {
         super.createTask(task);
         saveToFile();
     }
 
     @Override
-    public void createSubTask(Subtask subtask) throws IOException {
+    public void createSubTask(Subtask subtask) throws IOException, InterruptedException {
         super.createSubTask(subtask);
         saveToFile();
     }
 
     @Override
-    public void createEpic(Epic epic) throws IOException {
+    public void createEpic(Epic epic) throws IOException, InterruptedException {
         super.createEpic(epic);
         saveToFile();
     }
 
     @Override
-    public void updateTask(Integer id, Task newTask) throws IOException {
+    public void updateTask(Integer id, Task newTask) throws IOException, InterruptedException {
         super.updateTask(id, newTask);
         saveToFile();
     }
 
     @Override
-    public void updateSubTask(Integer id, Subtask newSubTask) throws IOException {
+    public void updateSubTask(Integer id, Subtask newSubTask) throws IOException, InterruptedException {
         super.updateSubTask(id, newSubTask);
         saveToFile();
     }
 
     @Override
-    public void updateEpic(Integer id, Epic newEpic) throws IOException {
+    public void updateEpic(Integer id, Epic newEpic) throws IOException, InterruptedException {
         super.updateEpic(id, newEpic);
         saveToFile();
     }
 
     @Override
-    public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException {
+    public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException, InterruptedException {
         super.addSubTaskToEpic(parentId, id);
         saveToFile();
     }
 
     @Override
-    public void removeTask(Integer id) throws IOException {
+    public void removeTask(Integer id) throws IOException, InterruptedException {
         super.removeTask(id);
         saveToFile();
     }
 
     @Override
-    public void clearSubtask() throws IOException {
+    public void clearSubtask() throws IOException, InterruptedException {
        super.clearSubtask();
        saveToFile();
     }
 
     @Override
-    public void clearTask() throws IOException {
+    public void clearTask() throws IOException, InterruptedException {
         super.clearTask();
         saveToFile();
     }
 
     @Override
-    public void clearEpic() throws IOException {
+    public void clearEpic() throws IOException, InterruptedException {
         super.clearEpic();
         saveToFile();
     }
 
     @Override
-    public Task getById(Integer id) throws IOException {
+    public Task getById(Integer id) throws IOException, InterruptedException {
         Task task;
         if (taskStorage.containsKey(id)) {
             task = taskStorage.get(id);
@@ -254,7 +254,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         FileBackedTasksManager fileBackedTasksManager1 = new FileBackedTasksManager();
 
         fileBackedTasksManager1.createTask(new Task("Task_1", "Desk_task_1"

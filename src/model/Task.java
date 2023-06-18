@@ -12,11 +12,11 @@ public class Task {
     protected String description;
     protected Integer id;
     protected Status status = Status.NEW;
-    protected int epic;
+    protected Boolean epic;
     protected Duration duration;
     protected LocalDateTime startTime;
     protected LocalDateTime endTime;
-    protected DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+//    protected DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
     public Task(String name, String description) {
@@ -31,6 +31,7 @@ public class Task {
     }
 
     public Task(String name, String description, String startTime, String duration) {
+        DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         this.name = name;
         this.description = description;
         this.startTime = LocalDateTime.parse(startTime, inputFormat);
@@ -45,6 +46,7 @@ public class Task {
     }
 
     public Task(String name, String description, Integer id, Status status, String startTime, String duration) {
+        DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         this.name = name;
         this.description = description;
         this.id = id;
@@ -94,11 +96,11 @@ public class Task {
         this.status = status;
     }
 
-    public int getEpic() {
+    public Boolean getEpic() {
         return epic;
     }
 
-    public void setEpic(int epic) {
+    public void setEpic(Boolean epic) {
         this.epic = epic;
     }
 

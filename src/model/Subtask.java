@@ -4,8 +4,6 @@ import java.util.Objects;
 
 public class Subtask extends Task {
     private Integer parentId;
-//    protected LocalDate
-
 
     public Subtask(String name, String description, Integer parentId) {
         super(name, description);

@@ -22,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public Task getById(Integer id) throws IOException {
+    public Task getById(Integer id) throws IOException, InterruptedException {
         Task task;
         if (taskStorage.containsKey(id)) {
             task = taskStorage.get(id);
@@ -53,8 +53,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createTask(Task task) throws IOException {
+    public void createTask(Task task) throws IOException, InterruptedException {
         task.setId(idCounter());
+        if (task.getStatus() == null) {
+            task.setStatus(Status.NEW);
+        }
         taskStorage.put(task.getId(), task);
         if (checkTaskTime(task)) {
             taskSortByTime.add(task);
@@ -62,8 +65,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createSubTask(Subtask subtask) throws IOException, NullPointerException, NoSuchElementException {
-        subtask.setId(idCounter());
+    public void createSubTask(Subtask subtask) throws IOException, NullPointerException, NoSuchElementException, InterruptedException {
+        if (subtask.getStatus() == null) {
+            subtask.setStatus(Status.NEW);
+        }
+        if (subtask.getId() == null) {
+            subtask.setId(idCounter());
+        }
+
         subTaskStorage.put(subtask.getId(), subtask);
         if (checkTaskTime(subtask)) {
             taskSortByTime.add(subtask);
@@ -101,9 +110,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createEpic(Epic epic) throws IOException {
+    public void createEpic(Epic epic) throws IOException, InterruptedException {
+        if (epic.getStatus() == null) {
+            epic.setStatus(Status.NEW);
+        }
+        if (epic.getEpic() == null) {
+            epic.setEpic(true);
+        }
         if (epic.getId() == null) {
             epic.setId(idCounter());
+        }
+        if (epic.getChildren()== null) {
+            epic.setChildren(new ArrayList<Integer>());
         }
         epicStorage.put(epic.getId(), epic);
         if (checkTaskTime(epic)) {
@@ -229,30 +247,90 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Integer id, Task newTask) throws IOException {
+    public void updateTask(Integer id, Task newTask) throws IOException, InterruptedException {
         if (taskStorage.containsKey(id)) {
+            if (newTask.getName() == null) {
+                newTask.setName(taskStorage.get(id).getName());
+            }
+            if (newTask.getDescription() == null) {
+                newTask.setDescription(taskStorage.get(id).getDescription());
+            }
+            if (newTask.getStatus() == null) {
+                newTask.setStatus(taskStorage.get(id).getStatus());
+            }
+            if (newTask.getStartTime() == null) {
+                newTask.setStartTime(taskStorage.get(id).getStartTime());
+            }
+            if (newTask.getDuration() == null) {
+                newTask.setDuration(taskStorage.get(id).getDuration());
+            }
+            if (newTask.getEndTime() == null) {
+                newTask.setEndTime(taskStorage.get(id).getEndTime());
+            }
             newTask.setId(id);
             taskStorage.put(id, newTask);
         }
     }
 
     @Override
-    public void updateSubTask(Integer id, Subtask newSubTask) throws IOException {
+    public void updateSubTask(Integer id, Subtask newSubTask) throws IOException, InterruptedException {
         if (subTaskStorage.containsKey(id)) {
-            int parentId = subTaskStorage.get(id).getParentId();
-            newSubTask.setParentId(parentId);
+            if (newSubTask.getName() == null) {
+                newSubTask.setName(subTaskStorage.get(id).getName());
+            }
+            if (newSubTask.getDescription() == null) {
+                newSubTask.setDescription(subTaskStorage.get(id).getDescription());
+            }
+            if (newSubTask.getParentId() == null) {
+                newSubTask.setParentId(subTaskStorage.get(id).getParentId());
+            }
+            if (newSubTask.getStatus() == null) {
+                newSubTask.setStatus(subTaskStorage.get(id).getStatus());
+            }
+            if (newSubTask.getStartTime() == null) {
+                newSubTask.setStartTime(subTaskStorage.get(id).getStartTime());
+            }
+            if (newSubTask.getDuration() == null) {
+                newSubTask.setDuration(subTaskStorage.get(id).getDuration());
+            }
+            if (newSubTask.getEndTime() == null) {
+                newSubTask.setEndTime(subTaskStorage.get(id).getEndTime());
+            }
             newSubTask.setId(id);
             subTaskStorage.put(id, newSubTask);
-            addSubTaskToEpic(parentId, id);
+            addSubTaskToEpic(newSubTask.getParentId(), id);
             checkEpicStatus(newSubTask.getParentId());
         }
     }
 
     @Override
-    public void updateEpic(Integer id, Epic newEpic) throws IOException {
+    public void updateEpic(Integer id, Epic newEpic) throws IOException, InterruptedException {
         if (epicStorage.containsKey(id)) {
+            if (newEpic.getEpic() == null) {
+                newEpic.setEpic(epicStorage.get(id).getEpic());
+            }
+            if (newEpic.getName() == null) {
+                newEpic.setName(epicStorage.get(id).getName());
+            }
+            if (newEpic.getDescription() == null) {
+                newEpic.setDescription(epicStorage.get(id).getDescription());
+            }
             List<Integer> childId = epicStorage.get(id).getChildren();
-            newEpic.setStatus(epicStorage.get(id).getStatus());
+            if (newEpic.getStatus() == null) {
+                newEpic.setStatus(epicStorage.get(id).getStatus());
+            }
+            if (newEpic.getStartTime() == null) {
+                newEpic.setStartTime(epicStorage.get(id).getStartTime());
+            }
+            if (newEpic.getDuration() == null) {
+                newEpic.setDuration(epicStorage.get(id).getDuration());
+            }
+            if (newEpic.getEndTime() == null) {
+                newEpic.setEndTime(epicStorage.get(id).getEndTime());
+            }
+            if (newEpic.getChildren() == null) {
+                newEpic.setChildren(epicStorage.get(id).getChildren());
+            }
             newEpic.setChildren(childId);
             newEpic.setId(id);
             epicStorage.put(id, newEpic);
@@ -261,22 +339,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException {
+    public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException, InterruptedException {
         Epic epicTask = epicStorage.get(parentId);
-        if (!epicTask.getChildren().contains(id)) {
-            epicTask.getChildren().add(id);
+        for (Epic epic : epicStorage.values()) {
+            epic.getChildren().remove(id);
         }
+        epicTask.getChildren().add(id);
         epicStorage.put(parentId, epicTask);
         checkEpicStatus(parentId);
     }
 
     @Override
-    public void removeTask(Integer id) throws IOException, NullPointerException {
+    public void removeTask(Integer id) throws IOException, NullPointerException, InterruptedException {
         if (epicStorage.containsKey(id)) {
             List<Integer> childId = epicStorage.get(id).getChildren();
             for (Integer child : childId) {
-                Task task = subTaskStorage.remove(child);
-                inMemoryHistoryManager.remove(child);
+                Subtask task = subTaskStorage.remove(child);
+                try {
+                    inMemoryHistoryManager.remove(child);
+                } catch (NullPointerException ignored) {
+
+                }
                 sortRemove(task.getId());
             }
             epicStorage.remove(id);
@@ -301,11 +384,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void sortRemove(Integer id) {
-        taskSortByTime.removeIf(task -> Objects.equals(task.getId(), id));
+        for (Task task : taskSortByTime) {
+            if (task.getId() == id) {
+                taskSortByTime.remove(task);
+                return;
+            }
+        }
+//        taskSortByTime.removeIf(task -> Objects.equals(task.getId(), id));
     }
 
     @Override
-    public void clearSubtask() throws IOException {
+    public void clearSubtask() throws IOException, InterruptedException {
         for (Epic epic : epicStorage.values()) {
             epic.getChildren().clear();
             checkEpicStatus(epic.getId());
@@ -314,7 +403,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void clearTask() throws IOException {
+    public void clearTask() throws IOException, InterruptedException {
         for (Task task : taskStorage.values()) {
             taskSortByTime.remove(task);
         }
@@ -322,7 +411,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void clearEpic() throws IOException {
+    public void clearEpic() throws IOException, InterruptedException {
         for (Epic epic : epicStorage.values()) {
             taskSortByTime.remove(epic);
         }

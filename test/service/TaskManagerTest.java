@@ -18,7 +18,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     T taskManager;
 
     @Test
-    void getByIdTest() throws IOException {
+    void getByIdTest() throws IOException, InterruptedException {
 
         assertThrows(
                 IOException.class,
@@ -41,7 +41,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getTaskStorageTest() throws IOException {
+    void getTaskStorageTest() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         Task task = new Task("Task_1", "Desk_task_1", 1);
         List<Task> taskList = new ArrayList<>(List.of(task));
@@ -49,7 +49,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getSubTaskStorageTest() throws IOException {
+    void getSubTaskStorageTest() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
 
@@ -59,7 +59,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getEpicStorageTest() throws IOException {
+    void getEpicStorageTest() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));
 
@@ -71,39 +71,39 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createTask() throws IOException {
+    void createTask() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         assertEquals(new Task("Task_1", "Desk_task_1", 1), taskManager.getById(1));
     }
 
     @Test
-    void createTaskFromTask() throws IOException {
+    void createTaskFromTask() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1", 1));
         assertEquals(new Task("Task_1", "Desk_task_1", 1), taskManager.getById(1));
     }
 
     @Test
-    void createTaskWithTime() throws IOException {
+    void createTaskWithTime() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1", "01.05.2023 10:00", "PT10M"));
         assertEquals(new Task("Task_1", "Desk_task_1", 1, Status.NEW, "01.05.2023 10:00", "PT10M"), taskManager.getById(1));
     }
 
     @Test
-    void createSubtask() throws IOException {
+    void createSubtask() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, 1), taskManager.getById(2));
     }
 
     @Test
-    void createSubtaskFromSubtask() throws IOException {
+    void createSubtaskFromSubtask() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, 1));
         assertEquals(new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, 1), taskManager.getById(2));
     }
 
     @Test
-    void createSubtaskWithTime() throws IOException {
+    void createSubtaskWithTime() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
@@ -111,7 +111,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void epicGetSubtaskTime() throws IOException {
+    void epicGetSubtaskTime() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
@@ -120,7 +120,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void epicCalculateDuration() throws IOException {
+    void epicCalculateDuration() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
@@ -133,7 +133,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void checkTimeIntersections() throws IOException {
+    void checkTimeIntersections() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1",
                 "01.05.2023 10:00", "PT10M", 1));
@@ -145,19 +145,19 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createEpic() throws IOException {
+    void createEpic() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW), taskManager.getById(1));
     }
 
     @Test
-    void createEpicFromEpic() throws IOException {
+    void createEpicFromEpic() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW));
         assertEquals(new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW), taskManager.getById(1));
     }
 
     @Test
-    void idCounterPlus() throws IOException {
+    void idCounterPlus() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         taskManager.createTask(new Task("Task_2", "Desk_task_2"));
         taskManager.createTask(new Task("Task_3", "Desk_task_3"));
@@ -165,7 +165,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateTask() throws IOException {
+    void updateTask() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         taskManager.updateTask(1, new Task("Task_1_update", "Task_1_Description_update", 1));
         Task task = new Task("Task_1_update", "Task_1_Description_update", 1);
@@ -173,7 +173,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateSubTask() throws IOException {
+    void updateSubTask() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         taskManager.updateSubTask(2, new Subtask("Subtask_1_update", "Subtask_1_Description_update", 2, 1));
@@ -182,7 +182,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateEpic() throws IOException {
+    void updateEpic() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.updateEpic(1, new Epic("Epic_1_update", "Desk_Epic_1_update", 1));
         Epic epic = new Epic("Epic_1_update", "Desk_Epic_1_update", 1);
@@ -190,7 +190,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void addSubTaskToEpic() throws IOException {
+    void addSubTaskToEpic() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         taskManager.updateEpic(1, new Epic("Epic_1_update", "Desk_Epic_1_update", 1));
@@ -202,7 +202,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
 
     @Test
-    void removeTask() throws IOException {
+    void removeTask() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         taskManager.getById(1);
         taskManager.removeTask(1);
@@ -212,7 +212,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void clearSubtask() throws IOException {
+    void clearSubtask() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));
@@ -227,7 +227,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
 
     @Test
-    void clearTask() throws IOException {
+    void clearTask() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         taskManager.createTask(new Task("Task_2", "Desk_task_2"));
         taskManager.createTask(new Task("Task_3", "Desk_task_3"));
@@ -237,7 +237,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void clearEpic() throws IOException {
+    void clearEpic() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createEpic(new Epic("Epic_2", "Desk_Epic_2"));
         taskManager.createEpic(new Epic("Epic_3", "Desk_Epic_3"));
@@ -247,7 +247,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void checkEpicStatus() throws IOException {
+    void checkEpicStatus() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));

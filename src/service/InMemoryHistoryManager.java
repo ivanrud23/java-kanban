@@ -18,7 +18,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (customLinkedList.historyStorage.containsKey(task.getId())) {
-            remove(task.getId());
+            try {
+                remove(task.getId());
+            } catch (NullPointerException e) {
+            }
         }
         customLinkedList.linkLast(task);
     }
@@ -33,45 +36,35 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) throws NullPointerException{
-        Node node = customLinkedList.historyStorage.get(id);
-        if (customLinkedList.historyStorage.size() == 1) {
-            customLinkedList.historyStorage.remove(id);
-        } else if (node == customLinkedList.tail) {
-            customLinkedList.tail = node.getPrev();
-            customLinkedList.tail.setNext(null);
-            customLinkedList.historyStorage.remove(id);
-        } else if (node == customLinkedList.head) {
-            customLinkedList.head = node.getNext();
-            customLinkedList.head.setPrev(null);
-            customLinkedList.historyStorage.remove(id);
-        } else {
-            customLinkedList.removeNode(node);
-            customLinkedList.historyStorage.remove(id);
+        if (!getCustomLinkedList().getTasks().isEmpty()) {
+            Node node = customLinkedList.historyStorage.get(id);
+            if (customLinkedList.historyStorage.size() == 1) {
+                customLinkedList.historyStorage.remove(id);
+            } else if (node == customLinkedList.tail) {
+                customLinkedList.tail = node.getPrev();
+                customLinkedList.tail.setNext(null);
+                customLinkedList.historyStorage.remove(id);
+            } else if (node == customLinkedList.head) {
+                customLinkedList.head = node.getNext();
+                customLinkedList.head.setPrev(null);
+                customLinkedList.historyStorage.remove(id);
+            } else {
+                customLinkedList.removeNode(node);
+                customLinkedList.historyStorage.remove(id);
+            }
         }
-
     }
 
     @Override
     public List<Task> getHistory() {
-        System.out.println("—  —  —  —  —  —  —  —  —  —  —  —");
-        System.out.println("Истроия просмотренных задач:");
-        for (Task task : customLinkedList.getTasks()) {
-            System.out.println("Идентификатор — " + task.getId());
-            System.out.println("Название — " + task.getName());
-            System.out.println("Описание — " + task.getDescription());
-            System.out.println("Статус — " + task.getStatus());
-            System.out.println();
-        }
-        System.out.println("—  —  —  —  —  —  —  —  —  —  —  —");
         return customLinkedList.getTasks();
     }
 
-    private class CustomLinkedList {
+    class CustomLinkedList {
         private Node head;
         private Node tail;
         private Map<Integer, Node> historyStorage = new HashMap<>();
-        
-        
+
 
         private void linkLast(Task element) {
             final Node oldTail = tail;
