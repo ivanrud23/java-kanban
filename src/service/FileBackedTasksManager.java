@@ -16,7 +16,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-    private void saveToFile() throws IOException, NullPointerException{
+    @Override
+    public void save() throws IOException, NullPointerException, InterruptedException {
         Writer fileWriter = new FileWriter("history.csv");
         StringBuilder stringBuilder = new StringBuilder();
         for (Task task : this.taskStorage.values()) {
@@ -174,67 +175,67 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void createTask(Task task) throws IOException, InterruptedException {
         super.createTask(task);
-        saveToFile();
+        save();
     }
 
     @Override
     public void createSubTask(Subtask subtask) throws IOException, InterruptedException {
         super.createSubTask(subtask);
-        saveToFile();
+        save();
     }
 
     @Override
     public void createEpic(Epic epic) throws IOException, InterruptedException {
         super.createEpic(epic);
-        saveToFile();
+        save();
     }
 
     @Override
     public void updateTask(Integer id, Task newTask) throws IOException, InterruptedException {
         super.updateTask(id, newTask);
-        saveToFile();
+        save();
     }
 
     @Override
     public void updateSubTask(Integer id, Subtask newSubTask) throws IOException, InterruptedException {
         super.updateSubTask(id, newSubTask);
-        saveToFile();
+        save();
     }
 
     @Override
     public void updateEpic(Integer id, Epic newEpic) throws IOException, InterruptedException {
         super.updateEpic(id, newEpic);
-        saveToFile();
+        save();
     }
 
     @Override
     public void addSubTaskToEpic(Integer parentId, Integer id) throws IOException, InterruptedException {
         super.addSubTaskToEpic(parentId, id);
-        saveToFile();
+        save();
     }
 
     @Override
     public void removeTask(Integer id) throws IOException, InterruptedException {
         super.removeTask(id);
-        saveToFile();
+        save();
     }
 
     @Override
     public void clearSubtask() throws IOException, InterruptedException {
        super.clearSubtask();
-       saveToFile();
+       save();
     }
 
     @Override
     public void clearTask() throws IOException, InterruptedException {
         super.clearTask();
-        saveToFile();
+        save();
     }
 
     @Override
     public void clearEpic() throws IOException, InterruptedException {
         super.clearEpic();
-        saveToFile();
+        save();
     }
 
     @Override
@@ -250,7 +251,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new IOException("Введен несуществующий идентификатор");
         }
         inMemoryHistoryManager.add(task);
-        saveToFile();
+        save();
         return task;
     }
 

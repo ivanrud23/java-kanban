@@ -2,9 +2,6 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -19,7 +16,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +29,8 @@ public class HttpTaskServer {
             .create();
     private static HttpTaskManager httpTaskManager;
     private static HttpTaskManager httpTaskManager1;
-    private HttpServer httpServer;
-    private KVServer kvServer = new KVServer();
+    private final HttpServer httpServer;
+    private final KVServer kvServer = new KVServer();
 
     public HttpTaskServer(HttpTaskManager httpTaskManager) throws IOException, InterruptedException {
         this.httpServer = HttpServer.create();
@@ -51,9 +47,6 @@ public class HttpTaskServer {
         return kvServer;
     }
 
-    public void setKvServer(KVServer kvServer) {
-        this.kvServer = kvServer;
-    }
 
     public void stopHttpTaskServer() {
         httpServer.stop(0);
@@ -62,144 +55,86 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            Endpoint endpoint = getEndpoint(exchange, exchange.getRequestMethod());
-
-            switch (endpoint) {
-                case GET_PRIORITIZED: {
-                    handleGetPrioritized(exchange);
-                    break;
-                } case GET_HISTORY: {
-                    handleGetHistory(exchange);
-                    break;
-                } case GET_BY_ID: {
-                    try {
-                        handleGetById(exchange);
-                    } catch (InterruptedException | NumberFormatException e) {
-                        throw new RuntimeException(e.getMessage());
-                    }
-                    break;
-                } case CREATE_TASK: {
-                    try {
-                        handleCreateTask(exchange);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                } case CREATE_SUBTASK: {
-                    try {
-                        handleCreateSubtask(exchange);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                } case CREATE_EPIC: {
-                    try {
-                        handleCreateEpic(exchange);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                } case GET_EPIC_SUBTASKS: {
-                    handleGetEpicSubtasks(exchange);
-                    break;
-                } case GET_TASK: {
-                    handleGetTasks(exchange);
-                    break;
-                } case GET_SUBTASK: {
-                    handleGetSubtasks(exchange);
-                    break;
-                } case GET_EPIC: {
-                    handleGetEpic(exchange);
-                    break;
-                } case UPDATE_TASK: {
-                    try {
-                        handleUpdateTask(exchange);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                } case UPDATE_SUBTASK: {
-                    try {
-                        handleUpdateSubtask(exchange);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                } case UPDATE_EPIC: {
-                    try {
-                        handleUpdateEpic(exchange);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                } case DELETE_TASK_BY_ID: {
-                    handleDeleteTaskById(exchange);
-                    break;
-                } case DELETE_ALL_TASKS: {
-                    handleDeleteAllTasks(exchange);
-                    break;
-                } case DELETE_ALL_SUBTASKS: {
-                    handleDeleteAllSubtasks(exchange);
-                    break;
-                } case DELETE_ALL_EPIC: {
-                    try {
-                        handleDeleteAllEpics(exchange);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                } default: {
-                    writeResponse(exchange, "Такого эндпоинта не существует", 404);
-                }
-            }
-        }
-        private Endpoint getEndpoint(HttpExchange exchange, String requestMethod) throws NullPointerException {
             String requestPath = exchange.getRequestURI().getPath();
             String[] pathParts = requestPath.split("/");
             String query = exchange.getRequestURI().getQuery();
-
+            String requestMethod = exchange.getRequestMethod();
 
             if (pathParts.length == 2 && requestMethod.equals("GET")) {
-                return Endpoint.GET_PRIORITIZED;
+                handleGetPrioritized(exchange);
             } else if (pathParts.length == 3 && pathParts[2].equals("history")) {
-                return  Endpoint.GET_HISTORY;
+                handleGetHistory(exchange);
             } else if (pathParts.length == 3 && pathParts[2].equals("task") && requestMethod.equals("GET") && query == null) {
-                return  Endpoint.GET_TASK;
+                handleGetTasks(exchange);
             } else if (pathParts.length == 3 && pathParts[2].equals("subtask") && requestMethod.equals("GET") && query == null) {
-                return  Endpoint.GET_SUBTASK;
+                handleGetSubtasks(exchange);
             } else if (pathParts.length == 4 && pathParts[2].equals("subtask") && requestMethod.equals("GET") && query != null) {
-                return  Endpoint.GET_EPIC_SUBTASKS;
+                handleGetEpicSubtasks(exchange);
             } else if (pathParts.length == 3 && pathParts[2].equals("epic") && requestMethod.equals("GET") && query == null) {
-                return  Endpoint.GET_EPIC;
+                handleGetEpic(exchange);
             } else if (pathParts.length == 3 && requestMethod.equals("GET") && query != null) {
-                return Endpoint.GET_BY_ID;
+                try {
+                    handleGetById(exchange);
+                } catch (InterruptedException | NumberFormatException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
             } else if (pathParts.length == 3 && pathParts[2].equals("task") && requestMethod.equals("POST") && query == null) {
-                return Endpoint.CREATE_TASK;
+                try {
+                    handleCreateTask(exchange);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else if (pathParts.length == 3 && pathParts[2].equals("subtask") && requestMethod.equals("POST") && query == null) {
-                return Endpoint.CREATE_SUBTASK;
+                try {
+                    handleCreateSubtask(exchange);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else if (pathParts.length == 3 && pathParts[2].equals("epic") && requestMethod.equals("POST") && query == null) {
-                return Endpoint.CREATE_EPIC;
+                try {
+                    handleCreateEpic(exchange);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else if (pathParts.length == 3 && pathParts[2].equals("task") && requestMethod.equals("POST") && query != null) {
-                return Endpoint.UPDATE_TASK;
+                try {
+                    handleUpdateTask(exchange);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else if (pathParts.length == 3 && pathParts[2].equals("subtask") && requestMethod.equals("POST") && query != null) {
-                return Endpoint.UPDATE_SUBTASK;
+                try {
+                    handleUpdateSubtask(exchange);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else if (pathParts.length == 3 && pathParts[2].equals("epic") && requestMethod.equals("POST") && query != null) {
-                return Endpoint.UPDATE_EPIC;
+                try {
+                    handleUpdateEpic(exchange);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else if (pathParts.length == 3 && pathParts[2].equals("task") && requestMethod.equals("DELETE") && query != null) {
-                return Endpoint.DELETE_TASK_BY_ID;
+                handleDeleteTaskById(exchange);
             } else if (pathParts.length == 3 && pathParts[2].equals("task") && requestMethod.equals("DELETE") && query == null) {
-                return Endpoint.DELETE_ALL_TASKS;
+                handleDeleteAllTasks(exchange);
             } else if (pathParts.length == 3 && pathParts[2].equals("subtask") && requestMethod.equals("DELETE") && query == null) {
-                return Endpoint.DELETE_ALL_SUBTASKS;
+                handleDeleteAllSubtasks(exchange);
             } else if (pathParts.length == 3 && pathParts[2].equals("epic") && requestMethod.equals("DELETE") && query == null) {
-                return Endpoint.DELETE_ALL_EPIC;
+                try {
+                    handleDeleteAllEpics(exchange);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                writeResponse(exchange, "Такого эндпоинта не существует", 404);
             }
-            return Endpoint.UNKNOWN;
         }
 
         private void handleGetPrioritized(HttpExchange exchange) throws IOException {
             writeResponse(exchange, gson.toJson(httpTaskManager1.getPrioritizedTasks()), 200);
         }
+
         private void handleGetHistory(HttpExchange exchange)  throws IOException {
             writeResponse(exchange, gson.toJson(httpTaskManager1.inMemoryHistoryManager.getHistory()), 200);
         }
@@ -249,8 +184,8 @@ public class HttpTaskServer {
             writeResponse(exchange, "Все подзадачи успешно удалены", 204);
         }
         private void handleDeleteAllEpics(HttpExchange exchange) throws IOException, InterruptedException {
-            for (Object id : httpTaskManager.epicStorage.keySet()) {
-                httpTaskManager.removeTask((Integer) id);
+            for (Integer id : httpTaskManager.epicStorage.keySet()) {
+                httpTaskManager.removeTask(id);
             }
             writeResponse(exchange, "Все эпики с подзадачами успешно удалены", 204);
         }
@@ -276,7 +211,7 @@ public class HttpTaskServer {
             }
         }
         private void handleGetTasks(HttpExchange exchange) throws IOException{
-            writeResponse(exchange, gson.toJson(httpTaskManager1.getTaskStorage()), 200);
+            writeResponse(exchange, gson.toJson(httpTaskManager.getTaskStorage()), 200);
         }
         private void handleGetSubtasks(HttpExchange exchange) throws IOException{
             writeResponse(exchange, gson.toJson(httpTaskManager.getSubTaskStorage()), 200);
@@ -292,10 +227,7 @@ public class HttpTaskServer {
                 writeResponse(exchange, "У задачи отсутствует название" , 400);
                 return;
             }
-            if (task.getDescription() == null) {
-                writeResponse(exchange, "У задачи отсутствует описание" , 400);
-                return;
-            }
+
             httpTaskManager.createTask(task);
             writeResponse(exchange, "Задача создана", 201);
         }
@@ -305,10 +237,6 @@ public class HttpTaskServer {
             Subtask subtask = gson.fromJson(body, Subtask.class);
             if (subtask.getName() == null) {
                 writeResponse(exchange, "У подзадачи отсутствует название" , 400);
-                return;
-            }
-            if (subtask.getDescription() == null) {
-                writeResponse(exchange, "У подзадачи отсутствует описание" , 400);
                 return;
             }
             if (subtask.getParentId() == null) {
@@ -328,10 +256,6 @@ public class HttpTaskServer {
             Epic epic = gson.fromJson(body, Epic.class);
             if (epic.getName() == null) {
                 writeResponse(exchange, "У эпика отсутствует название" , 400);
-                return;
-            }
-            if (epic.getDescription() == null) {
-                writeResponse(exchange, "У эпика отсутствует описание" , 400);
                 return;
             }
             if (epic.getEpic() == null) {
@@ -410,34 +334,11 @@ public class HttpTaskServer {
             exchange.close();
         }
 
-        enum Endpoint {
-            CREATE_SUBTASK, CREATE_EPIC, CREATE_TASK, UPDATE_TASK, UPDATE_SUBTASK, UPDATE_EPIC,
-            GET_BY_ID, GET_EPIC_SUBTASKS, GET_TASK, GET_SUBTASK, GET_EPIC,
-            DELETE_TASK_BY_ID, DELETE_ALL_TASKS, DELETE_ALL_SUBTASKS, DELETE_ALL_EPIC,
-            GET_HISTORY, GET_PRIORITIZED, UNKNOWN}
     }
-    static class LocalDateAdapter extends TypeAdapter<LocalDateTime> {
-        private static final DateTimeFormatter formatterWriter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        private static final DateTimeFormatter formatterReader = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-        @Override
-        public void write(final JsonWriter jsonWriter, final LocalDateTime localDateTime) throws IOException, NullPointerException {
-            jsonWriter.value((localDateTime.format(formatterWriter)));
-
-        }
-        @Override
-        public LocalDateTime read(final JsonReader jsonReader) throws IOException, NullPointerException  {
-            return LocalDateTime.parse(jsonReader.nextString(), formatterReader);
-        }
-    }
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        try {
-                httpTaskManager = new HttpTaskManager();
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
+        httpTaskManager = new HttpTaskManager();
         HttpTaskServer httpTaskServer = new HttpTaskServer(httpTaskManager);
 
         httpTaskManager.createTask(new Task("Task_1", "Desk_task_1"
@@ -459,11 +360,7 @@ public class HttpTaskServer {
         httpTaskManager.getById(7);
 
         httpTaskManager1 = new HttpTaskManager();
-        try {
-            httpTaskManager1 = new HttpTaskManager();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        httpTaskManager1 = new HttpTaskManager();
         httpTaskManager1 = httpTaskManager1.loadAllTasks();
 
     }

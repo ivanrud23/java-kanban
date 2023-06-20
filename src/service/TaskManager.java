@@ -17,6 +17,8 @@ public interface TaskManager {
 
     public List<Task> getEpicStorage() throws IOException;
 
+    public void save() throws IOException, NullPointerException, InterruptedException;
+
     void createTask(Task task) throws IOException, InterruptedException;
 
     void createSubTask(Subtask subtask) throws IOException, InterruptedException;

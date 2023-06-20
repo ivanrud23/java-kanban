@@ -53,6 +53,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void save() throws IOException, NullPointerException, InterruptedException {
+
+    }
+
+    @Override
     public void createTask(Task task) throws IOException, InterruptedException {
         task.setId(idCounter());
         if (task.getStatus() == null) {

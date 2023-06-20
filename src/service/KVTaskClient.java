@@ -1,7 +1,5 @@
 package service;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,12 +7,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-
-
-
-    public KVTaskClient() throws IOException, InterruptedException {
-
-   }
 
     String getToken() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8078/register");
