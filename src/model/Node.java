@@ -1,6 +1,4 @@
-package service;
-
-import model.Task;
+package model;
 
 public class Node {
     private Task data;

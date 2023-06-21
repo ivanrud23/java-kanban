@@ -1,5 +1,6 @@
 package service;
 
+import managers.TaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,30 +46,29 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void getTaskStorageTest() throws IOException, InterruptedException {
         taskManager.createTask(new Task("Task_1", "Desk_task_1"));
         Task task = new Task("Task_1", "Desk_task_1", 1);
-        List<Task> taskList = new ArrayList<>(List.of(task));
-        assertEquals(taskList, taskManager.getTaskStorage());
+        HashMap<Integer, Task> taskStorage = new HashMap<>();
+        taskStorage.put(1, task);
+        assertEquals(taskStorage, taskManager.getTaskStorage());
     }
 
     @Test
     void getSubTaskStorageTest() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_1", "Desk_Sub_1", 1));
-
         Subtask subtask = new Subtask("Sub_1", "Desk_Sub_1", 2, Status.NEW, 1);
-        List<Task> subTaskList = new ArrayList<>(List.of(subtask));
-        assertEquals(subTaskList, taskManager.getSubTaskStorage());
+        HashMap<Integer, Task> taskStorage = new HashMap<>();
+        taskStorage.put(2, subtask);
+        assertEquals(taskStorage, taskManager.getSubTaskStorage());
     }
 
     @Test
     void getEpicStorageTest() throws IOException, InterruptedException {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 1));
-
-        Epic epic = new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW);
-        List<Integer> children = new ArrayList<>(List.of(2));
-        epic.setChildren(children);
-        List<Task> epicList = new ArrayList<>(List.of(epic));
-        assertEquals(epicList, taskManager.getEpicStorage());
+        Epic epic = new Epic("Epic_1", "Desk_Epic_1", 1, Status.NEW, new ArrayList<>(List.of(2)));
+        HashMap<Integer, Epic> taskStorage = new HashMap<>();
+        taskStorage.put(1, epic);
+        assertEquals(taskStorage, taskManager.getEpicStorage());
     }
 
     @Test
@@ -232,7 +233,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(new Task("Task_2", "Desk_task_2"));
         taskManager.createTask(new Task("Task_3", "Desk_task_3"));
         taskManager.clearTask();
-        List<Task> taskStorage = new ArrayList<>();
+        HashMap<Integer, Task> taskStorage = new HashMap();
         assertEquals(taskStorage, taskManager.getTaskStorage());
     }
 
@@ -242,7 +243,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(new Epic("Epic_2", "Desk_Epic_2"));
         taskManager.createEpic(new Epic("Epic_3", "Desk_Epic_3"));
         taskManager.clearEpic();
-        List<Task> taskStorage = new ArrayList<>();
+        HashMap<Integer, Epic> taskStorage = new HashMap();
         assertEquals(taskStorage, taskManager.getEpicStorage());
     }
 

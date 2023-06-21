@@ -1,4 +1,4 @@
-package service;
+package managers;
 
 import model.Epic;
 import model.Status;
@@ -36,26 +36,66 @@ public class InMemoryTaskManager implements TaskManager {
         inMemoryHistoryManager.add(task);
         return task;
     }
-
     @Override
-    public List<Task> getTaskStorage() throws IOException {
-        return new ArrayList<>(taskStorage.values());
+    public HashMap<Integer, Task> getTaskStorage() {
+        return taskStorage;
+    }
+    @Override
+    public void setTaskStorage(HashMap<Integer, Task> taskStorage) {
+        this.taskStorage = taskStorage;
+    }
+    @Override
+    public HashMap<Integer, Subtask> getSubTaskStorage() {
+        return subTaskStorage;
+    }
+
+    public void setSubTaskStorage(HashMap<Integer, Subtask> subTaskStorage) {
+        this.subTaskStorage = subTaskStorage;
     }
 
     @Override
-    public List<Task> getSubTaskStorage() {
-        return new ArrayList<>(subTaskStorage.values());
+    public HashMap<Integer, Epic> getEpicStorage() {
+        return epicStorage;
     }
 
-    @Override
-    public List<Task> getEpicStorage() {
-        return new ArrayList<>(epicStorage.values());
+    public void setEpicStorage(HashMap<Integer, Epic> epicStorage) {
+        this.epicStorage = epicStorage;
     }
 
-    @Override
-    public void save() throws IOException, NullPointerException, InterruptedException {
-
+    public InMemoryHistoryManager getInMemoryHistoryManager() {
+        return inMemoryHistoryManager;
     }
+
+    public void setInMemoryHistoryManager(InMemoryHistoryManager inMemoryHistoryManager) {
+        this.inMemoryHistoryManager = inMemoryHistoryManager;
+    }
+
+    public Set<Task> getTaskSortByTime() {
+        return taskSortByTime;
+    }
+
+    public void setTaskSortByTime(Set<Task> taskSortByTime) {
+        this.taskSortByTime = taskSortByTime;
+    }
+//    @Override
+//    public List<Task> getTaskStorage() throws IOException {
+//        return new ArrayList<>(taskStorage.values());
+//    }
+//
+//    @Override
+//    public List<Task> getSubTaskStorage() {
+//        return new ArrayList<>(subTaskStorage.values());
+//    }
+//
+//    @Override
+//    public List<Task> getEpicStorage() {
+//        return new ArrayList<>(epicStorage.values());
+//    }
+
+//    @Override
+//    protected void save() throws IOException, NullPointerException, InterruptedException {
+//
+//    }
 
     @Override
     public void createTask(Task task) throws IOException, InterruptedException {

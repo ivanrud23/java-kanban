@@ -1,6 +1,8 @@
 package service;
 
 import com.google.gson.Gson;
+import managers.HttpTaskManager;
+import managers.Managers;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -8,6 +10,7 @@ import model.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import servers.HttpTaskServer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,9 +29,9 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
 
     @BeforeEach
     void createManager() throws IOException, InterruptedException {
+        httpTaskServer = new HttpTaskServer();
         taskManager = new HttpTaskManager();
-        httpTaskServer = new HttpTaskServer(taskManager);
-        gson = new Gson();
+        gson = Managers.getGson();
     }
 
     @AfterEach
@@ -222,7 +225,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         taskManager.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 2));
         HttpTaskManager taskManager2 = new HttpTaskManager();
-        taskManager2 = taskManager2.loadAllTasks();
+//        taskManager2 = taskManager2.loadAllTasks();
         URI urlTask = URI.create("http://localhost:8080/tasks/task/?id=1");
         HttpRequest requestTask = HttpRequest.newBuilder()
                 .uri(urlTask)

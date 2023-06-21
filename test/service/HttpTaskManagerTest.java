@@ -1,6 +1,7 @@
 package service;
 
 import com.google.gson.Gson;
+import managers.HttpTaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -8,9 +9,11 @@ import model.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import servers.KVServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -98,20 +101,20 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager>  {
 
     @Test
     void loadAllTasksTest() throws IOException, InterruptedException {
-        HttpTaskManager taskManagerLoad = new HttpTaskManager();
+
 
         taskManager.createTask(new Task("Task_2", "Desk_task_2"));
         taskManager.createEpic(new Epic("Epic_2", "Desk_Epic_2"));
         taskManager.createSubTask(new Subtask("Sub_2", "Desk_Sub_2", 2));
-        List<Task> listOfTask = new ArrayList<>();
-        listOfTask.add(new Task("Task_2", "Desk_task_2", 1));
-        taskManagerLoad =taskManagerLoad.loadAllTasks();
-        List<Task> listOfSubtask = new ArrayList<>();
-        List<Task> listOfEpic = new ArrayList<>();
-        listOfEpic.add(new Epic("Epic_2", "Desk_Epic_2", 2, Status.NEW, new ArrayList<>(List.of(3))));
-        listOfSubtask.add(new Subtask("Sub_2", "Desk_Sub_2", 3, 2));
+        HttpTaskManager taskManagerLoad = new HttpTaskManager();
+        HashMap<Integer, Task> listOfTask = new HashMap<>();
+        HashMap<Integer, Subtask> listOfSubTask = new HashMap<>();
+        HashMap<Integer, Epic> listOfEpic = new HashMap<>();
+        listOfTask.put(1, new Task("Task_2", "Desk_task_2", 1));
+        listOfEpic.put(2, new Epic("Epic_2", "Desk_Epic_2", 2, Status.NEW, new ArrayList<>(List.of(3))));
+        listOfSubTask.put(3, new Subtask("Sub_2", "Desk_Sub_2", 3, 2));
         assertEquals(listOfTask, taskManagerLoad.getTaskStorage());
-        assertEquals(listOfSubtask, taskManagerLoad.getSubTaskStorage());
+        assertEquals(listOfSubTask, taskManagerLoad.getSubTaskStorage());
         assertEquals(listOfEpic, taskManagerLoad.getEpicStorage());
     }
 

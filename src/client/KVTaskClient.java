@@ -1,4 +1,4 @@
-package service;
+package client;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,7 +21,7 @@ public class KVTaskClient {
         return token;
     }
 
-    void put(String key, String json) throws IOException, InterruptedException {
+    public void put(String key, String json) throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8078/save/" + key + "?API_TOKEN=" + getToken());
                 HttpRequest request = HttpRequest.newBuilder()
                 .uri(url)
@@ -31,7 +31,7 @@ public class KVTaskClient {
         client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    String load(String key) throws IOException, InterruptedException {
+    public String load(String key) throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8078/load/" + key + "?API_TOKEN=" + getToken());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(url)

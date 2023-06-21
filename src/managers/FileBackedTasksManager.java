@@ -1,23 +1,26 @@
-package service;
+package managers;
 
 import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
+import model.TaskType;
 
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
 
+import static model.TaskType.*;
 
-import static service.TaskType.*;
+
+//import static service.TaskType.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-    @Override
-    public void save() throws IOException, NullPointerException, InterruptedException {
+//    @Override
+    protected void save() throws IOException, NullPointerException, InterruptedException {
         Writer fileWriter = new FileWriter("history.csv");
         StringBuilder stringBuilder = new StringBuilder();
         for (Task task : this.taskStorage.values()) {

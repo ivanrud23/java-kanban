@@ -1,21 +1,23 @@
-package service;
+package managers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import model.LocalDateAdapter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class Managers {
-    static LocalDateAdapter localDateAdapter = new LocalDateAdapter();
+    private static final LocalDateAdapter localDateAdapter = new LocalDateAdapter();
 
-//    static final Gson gson = new GsonBuilder()
-////            .registerTypeAdapter(LocalDateTime.class, new HttpTaskServer.LocalDateAdapter.nullSafe())
-////            .create();
-
-    static final Gson gson = new GsonBuilder()
+    private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, localDateAdapter.nullSafe())
+            .setPrettyPrinting()
             .create();
+
+    public static Gson getGson() {
+        return gson;
+    }
 
     public static TaskManager getDefault() throws IOException, InterruptedException {
         return new HttpTaskManager();

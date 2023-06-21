@@ -1,23 +1,28 @@
-package service;
+package managers;
 
 import model.Epic;
 import model.Subtask;
 import model.Task;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 public interface TaskManager {
 
     Task getById(Integer id) throws IOException, InterruptedException;
 
-    public List<Task> getTaskStorage() throws IOException;
 
-    public List<Task> getSubTaskStorage() throws IOException;
 
-    public List<Task> getEpicStorage() throws IOException;
+//    void save() throws IOException, NullPointerException, InterruptedException;
 
-    public void save() throws IOException, NullPointerException, InterruptedException;
+    HashMap<Integer, Task> getTaskStorage();
+
+    void setTaskStorage(HashMap<Integer, Task> taskStorage);
+
+    HashMap<Integer, Subtask> getSubTaskStorage();
+
+    HashMap<Integer, Epic> getEpicStorage();
 
     void createTask(Task task) throws IOException, InterruptedException;
 
