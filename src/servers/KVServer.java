@@ -103,6 +103,7 @@ public class KVServer {
 	}
 	public void stop() {
 		server.stop(0);
+		System.out.println("Останавливаем порт " + PORT);
 	}
 
 	private String generateApiToken() {

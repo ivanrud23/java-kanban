@@ -15,12 +15,7 @@ import java.util.Map;
 public class HttpTaskManager extends FileBackedTasksManager {
     private final KVTaskClient kvTaskClient = new KVTaskClient();
     private final URI url = URI.create("http://localhost:8078");
-//    private Managers managers = new Managers();
 
-
-//    public HttpTaskManager(HttpTaskManager httpTaskManager) throws IOException, InterruptedException {
-//        loadAllTasks(httpTaskManager);
-//    }
 
     public HttpTaskManager() throws IOException, InterruptedException {
         loadAllTasks(this);
@@ -44,7 +39,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         kvTaskClient.put("prioritized", Managers.getGson().toJson(prioritizedToJson(getPrioritizedTasks())));
     }
     private void loadAllTasks(HttpTaskManager newHttpTaskManager) throws IOException, InterruptedException {
-//        HttpTaskManager newHttpTaskManager = new HttpTaskManager();
         try {
             String responseTask = kvTaskClient.load("task");
             newHttpTaskManager.taskStorage = (HashMap<Integer, Task>) taskStorageFromJson(responseTask);
@@ -67,7 +61,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         } catch (IOException e) {
 
         }
-//        return newHttpTaskManager;
     }
     private List<Task> prioritizedToJson(List list) {
         List readyList = new ArrayList();

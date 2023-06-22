@@ -60,42 +60,55 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager>  {
         String epicString = taskManager.getKvTaskClient().load("epic");
         String historyString = taskManager.getKvTaskClient().load("history");
         String prioritizedString = taskManager.getKvTaskClient().load("prioritized");
-        assertEquals("{\"1\":\"{\\\"name\\\":\\\"Task_1\\\",\\\"description\\\":\\\"Desk_task_1\\\",\\\"id\\\":1," +
-                        "\\\"status\\\":\\\"NEW\\\",\\\"duration\\\":{\\\"seconds\\\":600,\\\"nanos\\\":0},\\\"startTime\\\"" +
-                        ":\\\"01.07.2023 10:00\\\",\\\"endTime\\\":\\\"01.07.2023 10:10\\\"}\",\"2\":\"{\\\"name\\\":\\\"" +
-                        "Task_2\\\",\\\"description\\\":\\\"Desk_task_2\\\",\\\"id\\\":2,\\\"status\\\":\\\"NEW\\\"}\"}",
+        assertEquals("{\n" +
+                        "  \"1\": \"{\\n  \\\"name\\\": \\\"Task_1\\\",\\n  \\\"description\\\": \\\"Desk_task_1\\\"," +
+                        "\\n  \\\"id\\\": 1,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"duration\\\": 600,\\n  \\\"startTime\\\": " +
+                        "\\\"01.07.2023 10:00\\\",\\n  \\\"endTime\\\": \\\"01.07.2023 10:10\\\"\\n}\",\n" +
+                        "  \"2\": \"{\\n  \\\"name\\\": \\\"Task_2\\\",\\n  \\\"description\\\": \\\"Desk_task_2\\\",\\n " +
+                        " \\\"id\\\": 2,\\n  \\\"status\\\": \\\"NEW\\\"\\n}\"\n" +
+                        "}",
                 taskString);
-        assertEquals("{\"5\":\"{\\\"parentId\\\":3,\\\"name\\\":\\\"Sub_1\\\",\\\"description\\\":\\\"Desk_Sub_1\\\"," +
-                        "\\\"id\\\":5,\\\"status\\\":\\\"NEW\\\",\\\"duration\\\":{\\\"seconds\\\":600,\\\"nanos\\\":0}," +
-                        "\\\"startTime\\\":\\\"01.07.2023 10:10\\\",\\\"endTime\\\":\\\"01.07.2023 10:20\\\"}\",\"6\":" +
-                        "\"{\\\"parentId\\\":3,\\\"name\\\":\\\"Sub_2\\\",\\\"description\\\":\\\"Desk_Sub_2\\\",\\\"id\\\":6," +
-                        "\\\"status\\\":\\\"NEW\\\"}\",\"7\":\"{\\\"parentId\\\":3,\\\"name\\\":\\\"Sub_3\\\",\\\"description\\\":" +
-                        "\\\"Desk_Sub_3\\\",\\\"id\\\":7,\\\"status\\\":\\\"NEW\\\",\\\"duration\\\":{\\\"seconds\\\":600," +
-                        "\\\"nanos\\\":0},\\\"startTime\\\":\\\"01.07.2023 10:20\\\",\\\"endTime\\\":\\\"01.07.2023 10:30\\\"}\"}",
+        assertEquals("{\n" +
+                        "  \"5\": \"{\\n  \\\"parentId\\\": 3,\\n  \\\"name\\\": \\\"Sub_1\\\",\\n  \\\"description\\\": " +
+                        "\\\"Desk_Sub_1\\\",\\n  \\\"id\\\": 5,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"duration\\\": 600," +
+                        "\\n  \\\"startTime\\\": \\\"01.07.2023 10:10\\\",\\n  \\\"endTime\\\": \\\"01.07.2023 10:20\\\"\\n}\",\n" +
+                        "  \"6\": \"{\\n  \\\"parentId\\\": 3,\\n  \\\"name\\\": \\\"Sub_2\\\",\\n  \\\"description\\\": " +
+                        "\\\"Desk_Sub_2\\\",\\n  \\\"id\\\": 6,\\n  \\\"status\\\": \\\"NEW\\\"\\n}\",\n" +
+                        "  \"7\": \"{\\n  \\\"parentId\\\": 3,\\n  \\\"name\\\": \\\"Sub_3\\\",\\n  \\\"description\\\": " +
+                        "\\\"Desk_Sub_3\\\",\\n  \\\"id\\\": 7,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"duration\\\": 600," +
+                        "\\n  \\\"startTime\\\": \\\"01.07.2023 10:20\\\",\\n  \\\"endTime\\\": \\\"01.07.2023 10:30\\\"\\n}\"\n" +
+                        "}",
                 subtaskString);
-        assertEquals("{\"3\":\"{\\\"children\\\":[5,6,7],\\\"name\\\":\\\"Epic_1\\\",\\\"description\\\":" +
-                        "\\\"Desk_Epic_1\\\",\\\"id\\\":3,\\\"status\\\":\\\"NEW\\\",\\\"epic\\\":true,\\\"duration\\\":" +
-                        "{\\\"seconds\\\":1200,\\\"nanos\\\":0},\\\"startTime\\\":\\\"01.07.2023 10:10\\\",\\\"endTime\\\":" +
-                        "\\\"01.07.2023 10:30\\\"}\",\"4\":\"{\\\"children\\\":[],\\\"name\\\":\\\"Epic_2\\\",\\\"description\\\":" +
-                        "\\\"Desk_Epic_2\\\",\\\"id\\\":4,\\\"status\\\":\\\"NEW\\\",\\\"epic\\\":true}\"}",
+        assertEquals("{\n" +
+                        "  \"3\": \"{\\n  \\\"children\\\": [\\n    5,\\n    6,\\n    7\\n  ],\\n  \\\"name\\\": " +
+                        "\\\"Epic_1\\\",\\n  \\\"description\\\": \\\"Desk_Epic_1\\\",\\n  \\\"id\\\": 3,\\n  \\\"status\\\": " +
+                        "\\\"NEW\\\",\\n  \\\"epic\\\": true,\\n  \\\"duration\\\": 1200,\\n  \\\"startTime\\\":" +
+                        " \\\"01.07.2023 10:10\\\",\\n  \\\"endTime\\\": \\\"01.07.2023 10:30\\\"\\n}\",\n" +
+                        "  \"4\": \"{\\n  \\\"children\\\": [],\\n  \\\"name\\\": \\\"Epic_2\\\",\\n  \\\"description\\\":" +
+                        " \\\"Desk_Epic_2\\\",\\n  \\\"id\\\": 4,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"epic\\\": true\\n}\"\n" +
+                        "}",
                 epicString);
         assertEquals("\"6,5,3,4,1,2,7\"", historyString);
-        assertEquals("[\"{\\\"name\\\":\\\"Task_1\\\",\\\"description\\\":\\\"Desk_task_1\\\",\\\"id\\\":1," +
-                        "\\\"status\\\":\\\"NEW\\\",\\\"duration\\\":{\\\"seconds\\\":600,\\\"nanos\\\":0},\\\"startTime\\\":" +
-                        "\\\"01.07.2023 10:00\\\",\\\"endTime\\\":\\\"01.07.2023 10:10\\\"}\",\"{\\\"parentId\\\":3," +
-                        "\\\"name\\\":\\\"Sub_1\\\",\\\"description\\\":\\\"Desk_Sub_1\\\",\\\"id\\\":5,\\\"status\\\":" +
-                        "\\\"NEW\\\",\\\"duration\\\":{\\\"seconds\\\":600,\\\"nanos\\\":0},\\\"startTime\\\":" +
-                        "\\\"01.07.2023 10:10\\\",\\\"endTime\\\":\\\"01.07.2023 10:20\\\"}\",\"{\\\"parentId\\\":3," +
-                        "\\\"name\\\":\\\"Sub_3\\\",\\\"description\\\":\\\"Desk_Sub_3\\\",\\\"id\\\":7,\\\"status\\\":" +
-                        "\\\"NEW\\\",\\\"duration\\\":{\\\"seconds\\\":600,\\\"nanos\\\":0},\\\"startTime\\\":" +
-                        "\\\"01.07.2023 10:20\\\",\\\"endTime\\\":\\\"01.07.2023 10:30\\\"}\",\"{\\\"name\\\":\\\"Task_2\\\"," +
-                        "\\\"description\\\":\\\"Desk_task_2\\\",\\\"id\\\":2,\\\"status\\\":\\\"NEW\\\"}\",\"{\\\"children\\\":[5,6,7]," +
-                        "\\\"name\\\":\\\"Epic_1\\\",\\\"description\\\":\\\"Desk_Epic_1\\\",\\\"id\\\":3,\\\"status\\\":\\\"NEW\\\"," +
-                        "\\\"epic\\\":true,\\\"duration\\\":{\\\"seconds\\\":1200,\\\"nanos\\\":0},\\\"startTime\\\":" +
-                        "\\\"01.07.2023 10:10\\\",\\\"endTime\\\":\\\"01.07.2023 10:30\\\"}\",\"{\\\"children\\\":[]," +
-                        "\\\"name\\\":\\\"Epic_2\\\",\\\"description\\\":\\\"Desk_Epic_2\\\",\\\"id\\\":4,\\\"status\\\":" +
-                        "\\\"NEW\\\",\\\"epic\\\":true}\",\"{\\\"parentId\\\":3,\\\"name\\\":\\\"Sub_2\\\",\\\"description\\\":" +
-                        "\\\"Desk_Sub_2\\\",\\\"id\\\":6,\\\"status\\\":\\\"NEW\\\"}\"]",
+        assertEquals("[\n" +
+                        "  \"{\\n  \\\"name\\\": \\\"Task_1\\\",\\n  \\\"description\\\": \\\"Desk_task_1\\\",\\n  \\\"id\\\": " +
+                        "1,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"duration\\\": 600,\\n  \\\"startTime\\\": " +
+                        "\\\"01.07.2023 10:00\\\",\\n  \\\"endTime\\\": \\\"01.07.2023 10:10\\\"\\n}\",\n" +
+                        "  \"{\\n  \\\"parentId\\\": 3,\\n  \\\"name\\\": \\\"Sub_1\\\",\\n  \\\"description\\\":" +
+                        " \\\"Desk_Sub_1\\\",\\n  \\\"id\\\": 5,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"duration\\\": " +
+                        "600,\\n  \\\"startTime\\\": \\\"01.07.2023 10:10\\\",\\n  \\\"endTime\\\": \\\"01.07.2023 10:20\\\"\\n}\",\n" +
+                        "  \"{\\n  \\\"parentId\\\": 3,\\n  \\\"name\\\": \\\"Sub_3\\\",\\n  \\\"description\\\": " +
+                        "\\\"Desk_Sub_3\\\",\\n  \\\"id\\\": 7,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"duration\\\": 600,\\n  \\\"startTime\\\": \\\"01.07.2023 10:20\\\",\\n  \\\"endTime\\\": \\\"01.07.2023 10:30\\\"\\n}\",\n" +
+                        "  \"{\\n  \\\"name\\\": \\\"Task_2\\\",\\n  \\\"description\\\": \\\"Desk_task_2\\\"," +
+                        "\\n  \\\"id\\\": 2,\\n  \\\"status\\\": \\\"NEW\\\"\\n}\",\n" +
+                        "  \"{\\n  \\\"children\\\": [\\n    5,\\n    6,\\n    7\\n  ],\\n  \\\"name\\\": \\\"Epic_1\\\"," +
+                        "\\n  \\\"description\\\": \\\"Desk_Epic_1\\\",\\n  \\\"id\\\": 3,\\n  \\\"status\\\": \\\"NEW\\\"," +
+                        "\\n  \\\"epic\\\": true,\\n  \\\"duration\\\": 1200,\\n  \\\"startTime\\\": \\\"01.07.2023 10:10\\\"," +
+                        "\\n  \\\"endTime\\\": \\\"01.07.2023 10:30\\\"\\n}\",\n" +
+                        "  \"{\\n  \\\"children\\\": [],\\n  \\\"name\\\": \\\"Epic_2\\\",\\n  \\\"description\\\": " +
+                        "\\\"Desk_Epic_2\\\",\\n  \\\"id\\\": 4,\\n  \\\"status\\\": \\\"NEW\\\",\\n  \\\"epic\\\": true\\n}\",\n" +
+                        "  \"{\\n  \\\"parentId\\\": 3,\\n  \\\"name\\\": \\\"Sub_2\\\",\\n  \\\"description\\\":" +
+                        " \\\"Desk_Sub_2\\\",\\n  \\\"id\\\": 6,\\n  \\\"status\\\": \\\"NEW\\\"\\n}\"\n" +
+                        "]",
                 prioritizedString);
     }
 
