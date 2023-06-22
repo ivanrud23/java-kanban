@@ -24,11 +24,7 @@ public class HttpTaskServer {
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Gson gson = Managers.getGson();
-//            .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter().nullSafe())
-//            .setPrettyPrinting()
-//            .create();
-    private static HttpTaskManager httpTaskManager;
-//    private static HttpTaskManager httpTaskManager1;
+    private HttpTaskManager httpTaskManager;
 
     private final HttpServer httpServer;
     private final KVServer kvServer = new KVServer();
@@ -36,6 +32,7 @@ public class HttpTaskServer {
     public HttpTaskServer() throws IOException, InterruptedException {
         kvServer.start();
         this.httpServer = HttpServer.create();
+        httpTaskManager = new HttpTaskManager();
         this.httpServer.bind(new InetSocketAddress(PORT), 0);
         this.httpServer.createContext("/tasks", new TasksHandler());
         this.httpServer.createContext("/tasks/subtask", new SubTasksHandler());
@@ -47,6 +44,10 @@ public class HttpTaskServer {
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
+    public HttpTaskManager getHttpTaskManager() {
+        return httpTaskManager;
+    }
+
     public KVServer getKvServer() {
         return kvServer;
     }
@@ -56,7 +57,7 @@ public class HttpTaskServer {
         httpServer.stop(0);
     }
 
-    static class SubTasksHandler implements HttpHandler {
+    class SubTasksHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -160,7 +161,7 @@ public class HttpTaskServer {
         }
     }
 
-    static class EpicHandler implements HttpHandler {
+    class EpicHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -230,6 +231,7 @@ public class HttpTaskServer {
                 writeResponse(exchange, "Введен не числовой идентификатор" + exchange.getRequestURI().getQuery(), 400);
             }
         }
+
         private void handleDeleteAllEpics(HttpExchange exchange) throws IOException, InterruptedException {
             for (Integer id : httpTaskManager.getEpicStorage().keySet()) {
                 httpTaskManager.removeTask(id);
@@ -238,24 +240,25 @@ public class HttpTaskServer {
         }
     }
 
-    static class HistoryHandler implements HttpHandler {
+    class HistoryHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String requestPath = exchange.getRequestURI().getPath();
             String[] pathParts = requestPath.split("/");
 
-             if (pathParts.length == 3 && pathParts[2].equals("history")) {
+            if (pathParts.length == 3 && pathParts[2].equals("history")) {
                 handleGetHistory(exchange);
             }
         }
+
         private void handleGetHistory(HttpExchange exchange) throws IOException {
             writeResponse(exchange, gson.toJson(httpTaskManager.getInMemoryHistoryManager().getHistory()), 200);
         }
     }
 
 
-    static class TasksHandler implements HttpHandler {
+    class TasksHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String requestPath = exchange.getRequestURI().getPath();
@@ -399,7 +402,7 @@ public class HttpTaskServer {
     public static void main(String[] args) throws IOException, InterruptedException {
 
         HttpTaskServer httpTaskServer = new HttpTaskServer();
-        httpTaskManager = new HttpTaskManager();
+        HttpTaskManager httpTaskManager = new HttpTaskManager();
 
 
         httpTaskManager.createTask(new Task("Task_1", "Desk_task_1"

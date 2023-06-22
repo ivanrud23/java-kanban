@@ -2,16 +2,19 @@ package managers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import model.DurationTypeAdapter;
 import model.LocalDateAdapter;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Managers {
     private static final LocalDateAdapter localDateAdapter = new LocalDateAdapter();
 
-    private static final Gson gson = new GsonBuilder()
+    private final static Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, localDateAdapter.nullSafe())
+            .registerTypeAdapter(Duration.class,new DurationTypeAdapter().nullSafe())
             .setPrettyPrinting()
             .create();
 

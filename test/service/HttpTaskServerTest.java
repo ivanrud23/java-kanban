@@ -18,6 +18,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,14 +43,16 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     @Test
     void createTask() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/task");
+        Task task = new Task("Task_1","Desk_task_1");
+        String json = gson.toJson(task);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString("\t{\"name\": \"Task_1\", \"description\": \"Desk_task_1\"}"))
+                .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         client.send(request, handler);
-        assertEquals(taskManager.getById(1), new Task("Task_1", "Desk_task_1", 1, Status.NEW));
+        assertEquals(httpTaskServer.getHttpTaskManager().getById(1), new Task("Task_1", "Desk_task_1", 1, Status.NEW));
     }
 
     @Test
@@ -179,7 +182,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         client.send(request, handler);
-        assertEquals(taskManager.getSubTaskStorage(), new ArrayList<>());
+        assertTrue(httpTaskServer.getHttpTaskManager().getSubTaskStorage().isEmpty());
     }
 
     @Test
@@ -195,7 +198,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         client.send(request, handler);
-        assertEquals(taskManager.getTaskStorage(), new ArrayList<>());
+        assertTrue(httpTaskServer.getHttpTaskManager().getTaskStorage().isEmpty());
     }
 
     @Test
@@ -214,8 +217,9 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         client.send(request, handler);
-        assertEquals(taskManager.getSubTaskStorage(), new ArrayList<>());
-        assertEquals(taskManager.getEpicStorage(), new ArrayList<>());
+        assertTrue(httpTaskServer.getHttpTaskManager().getSubTaskStorage().isEmpty());
+        assertTrue(httpTaskServer.getHttpTaskManager().getEpicStorage().isEmpty());
+
     }
 
 
