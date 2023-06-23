@@ -13,13 +13,11 @@ import java.time.format.DateTimeFormatter;
 import static model.TaskType.*;
 
 
-//import static service.TaskType.*;
-
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-//    @Override
+
     protected void save() throws IOException, NullPointerException, InterruptedException {
         Writer fileWriter = new FileWriter("history.csv");
         StringBuilder stringBuilder = new StringBuilder();
@@ -33,7 +31,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             stringBuilder.append(taskToString(task));
         }
 
-        if (!String.valueOf(stringBuilder).isEmpty()){
+        if (!String.valueOf(stringBuilder).isEmpty()) {
             stringBuilder.deleteCharAt(stringBuilder.length() - 2);
         }
         fileWriter.write(String.valueOf(stringBuilder));
@@ -45,7 +43,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileWriter.close();
     }
 
-    private String taskToString(Task task) throws NullPointerException{
+    private String taskToString(Task task) throws NullPointerException {
         TaskType taskType;
         if (task.getClass().getName().equals("model.Subtask")) {
             taskType = SUBTASK;
@@ -55,7 +53,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String endString = ", " + subtask.getParentId() + "," + "\n";
             String timeString;
             if (task.getStartTime() != null) {
-                timeString = ", " + task.getStartTime().format(outputFormat) + ", " + (task.getDuration()) ;
+                timeString = ", " + task.getStartTime().format(outputFormat) + ", " + (task.getDuration());
                 return startString + timeString + endString;
             } else {
                 return startString + endString;
@@ -124,15 +122,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private static String historyToString (HistoryManager manager) {
+    private static String historyToString(HistoryManager manager) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Task task : manager.getHistory()) {
             stringBuilder.append(task.getId());
             stringBuilder.append(",");
         }
-        if (!String.valueOf(stringBuilder).isEmpty()){
-             stringBuilder.deleteCharAt(stringBuilder.length() -1);
-         }
+        if (!String.valueOf(stringBuilder).isEmpty()) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
         return stringBuilder.toString();
     }
 
@@ -145,7 +143,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String line = br.readLine();
             if (!line.isEmpty()) {
                 if (line.split(",")[1].trim().equals("TASK")) {
-//                    fileBackedTasksManager.createTask(fileBackedTasksManager.fromString(line));
                     Task task = fileBackedTasksManager.fromString(line);
                     fileBackedTasksManager.taskStorage.put(task.getId(), task);
                     if (fileBackedTasksManager.checkTaskTime(task)) {
@@ -225,8 +222,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public void clearSubtask() throws IOException, InterruptedException {
-       super.clearSubtask();
-       save();
+        super.clearSubtask();
+        save();
     }
 
     @Override
@@ -248,7 +245,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             task = taskStorage.get(id);
         } else if (subTaskStorage.containsKey(id)) {
             task = subTaskStorage.get(id);
-        } else if (epicStorage.containsKey(id)){
+        } else if (epicStorage.containsKey(id)) {
             task = epicStorage.get(id);
         } else {
             throw new IOException("Введен несуществующий идентификатор");
@@ -262,7 +259,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager fileBackedTasksManager1 = new FileBackedTasksManager();
 
         fileBackedTasksManager1.createTask(new Task("Task_1", "Desk_task_1"
-                ,"01.05.2023 10:00", "PT10M"));
+                , "01.05.2023 10:00", "PT10M"));
         fileBackedTasksManager1.createTask(new Task("Task_2", "Desk_task_2"));
         fileBackedTasksManager1.createEpic(new Epic("Epic_1", "Desk_Epic_1"));
         fileBackedTasksManager1.createEpic(new Epic("Epic_2", "Desk_Epic_2"));

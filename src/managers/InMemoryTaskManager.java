@@ -36,14 +36,17 @@ public class InMemoryTaskManager implements TaskManager {
         inMemoryHistoryManager.add(task);
         return task;
     }
+
     @Override
     public HashMap<Integer, Task> getTaskStorage() {
         return taskStorage;
     }
+
     @Override
     public void setTaskStorage(HashMap<Integer, Task> taskStorage) {
         this.taskStorage = taskStorage;
     }
+
     @Override
     public HashMap<Integer, Subtask> getSubTaskStorage() {
         return subTaskStorage;
@@ -77,25 +80,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void setTaskSortByTime(Set<Task> taskSortByTime) {
         this.taskSortByTime = taskSortByTime;
     }
-//    @Override
-//    public List<Task> getTaskStorage() throws IOException {
-//        return new ArrayList<>(taskStorage.values());
-//    }
-//
-//    @Override
-//    public List<Task> getSubTaskStorage() {
-//        return new ArrayList<>(subTaskStorage.values());
-//    }
-//
-//    @Override
-//    public List<Task> getEpicStorage() {
-//        return new ArrayList<>(epicStorage.values());
-//    }
-
-//    @Override
-//    protected void save() throws IOException, NullPointerException, InterruptedException {
-//
-//    }
 
     @Override
     public void createTask(Task task) throws IOException, InterruptedException {
@@ -165,7 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic.getId() == null) {
             epic.setId(idCounter());
         }
-        if (epic.getChildren()== null) {
+        if (epic.getChildren() == null) {
             epic.setChildren(new ArrayList<Integer>());
         }
         epicStorage.put(epic.getId(), epic);
@@ -435,7 +419,6 @@ public class InMemoryTaskManager implements TaskManager {
                 return;
             }
         }
-//        taskSortByTime.removeIf(task -> Objects.equals(task.getId(), id));
     }
 
     @Override

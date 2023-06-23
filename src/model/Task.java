@@ -16,7 +16,6 @@ public class Task {
     protected Duration duration;
     protected LocalDateTime startTime;
     protected LocalDateTime endTime;
-//    protected DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
     public Task(String name, String description) {
@@ -112,7 +111,7 @@ public class Task {
         this.duration = duration;
     }
 
-    public LocalDateTime getStartTime() throws NullPointerException{
+    public LocalDateTime getStartTime() throws NullPointerException {
         return startTime;
     }
 

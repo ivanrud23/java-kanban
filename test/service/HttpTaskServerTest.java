@@ -51,7 +51,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     @Test
     void createTask() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/task");
-        Task task = new Task("Task_1","Desk_task_1");
+        Task task = new Task("Task_1", "Desk_task_1");
         String json = gson.toJson(task);
         HttpRequest requestCreate = HttpRequest.newBuilder()
                 .uri(url)
@@ -66,7 +66,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         client.send(requestCreate, handler);
         HttpResponse<String> response = client.send(getTasks, handler);
         HashMap<Integer, Task> taskStorage = new HashMap<>();
-        taskStorage.put(1,  new Task("Task_1", "Desk_task_1", 1, Status.NEW));
+        taskStorage.put(1, new Task("Task_1", "Desk_task_1", 1, Status.NEW));
         assertEquals(gson.toJson(taskStorage), response.body());
     }
 
@@ -75,8 +75,8 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         URI urlSEpic = URI.create("http://localhost:8080/tasks/epic");
         Epic epic = new Epic("Epic_1", "Desk_epic_1");
         Subtask subtask = new Subtask("SubTask_1", "Desk_SubTask_1", 1);
-        String  epicJson = gson.toJson(epic);
-        String  subtaskJson = gson.toJson(subtask);
+        String epicJson = gson.toJson(epic);
+        String subtaskJson = gson.toJson(subtask);
         HttpRequest createEpic = HttpRequest.newBuilder()
                 .uri(urlSEpic)
                 .POST(HttpRequest.BodyPublishers.ofString(epicJson))
@@ -96,7 +96,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         client.send(createSub, handler);
         HttpResponse<String> response = client.send(getSubtasks, handler);
         HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
-        subtaskStorage.put(2,  new Subtask("SubTask_1", "Desk_SubTask_1", 2, Status.NEW, 1));
+        subtaskStorage.put(2, new Subtask("SubTask_1", "Desk_SubTask_1", 2, Status.NEW, 1));
         assertEquals(gson.toJson(subtaskStorage), response.body());
     }
 
@@ -123,7 +123,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     @Test
     void getById() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/task");
-        Task task = new Task("Task_1","Desk_task_1");
+        Task task = new Task("Task_1", "Desk_task_1");
         String json = gson.toJson(task);
         HttpRequest requestCreate = HttpRequest.newBuilder()
                 .uri(url)
@@ -138,13 +138,13 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         client.send(requestCreate, handler);
         HttpResponse<String> response = client.send(getTasks, handler);
         HashMap<Integer, Task> taskStorage = new HashMap<>();
-        taskStorage.put(1,  new Task("Task_1", "Desk_task_1", 1, Status.NEW));
+        taskStorage.put(1, new Task("Task_1", "Desk_task_1", 1, Status.NEW));
         assertEquals(gson.toJson(taskStorage), response.body());
     }
 
     @Test
     void updateTask() throws IOException, InterruptedException {
-        Task task = new Task("Task_1","Desk_task_1");
+        Task task = new Task("Task_1", "Desk_task_1");
         String json = gson.toJson(task);
         URI url = URI.create("http://localhost:8080/tasks/task/?id=1");
         HttpRequest createTask = HttpRequest.newBuilder()
@@ -165,7 +165,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         client.send(updateTask, handler);
         HttpResponse<String> response = client.send(getTasks, handler);
         HashMap<Integer, Task> taskStorage = new HashMap<>();
-        taskStorage.put(1,  new Task("Task_1", "Task_1_UPDATE", 1, Status.NEW));
+        taskStorage.put(1, new Task("Task_1", "Task_1_UPDATE", 1, Status.NEW));
         assertEquals(gson.toJson(taskStorage), response.body());
 
     }
@@ -174,8 +174,8 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     void updateSubTask() throws IOException, InterruptedException {
         Epic epic = new Epic("Epic_1", "Desk_epic_1");
         Subtask subtask = new Subtask("SubTask_1", "Desk_SubTask_1", 1);
-        String  epicJson = gson.toJson(epic);
-        String  subtaskJson = gson.toJson(subtask);
+        String epicJson = gson.toJson(epic);
+        String subtaskJson = gson.toJson(subtask);
         URI url = URI.create("http://localhost:8080/tasks/subtask/?id=2");
         URI urlSubtask = URI.create("http://localhost:8080/tasks/subtask");
         HttpRequest createEpic = HttpRequest.newBuilder()
@@ -201,7 +201,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         client.send(updateSubtask, handler);
         HttpResponse<String> response = client.send(getSubtasks, handler);
         HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
-        subtaskStorage.put(2,  new Subtask("SubTask_1", "Desk_Sub_1_UPDATE", 2, Status.NEW, 1));
+        subtaskStorage.put(2, new Subtask("SubTask_1", "Desk_Sub_1_UPDATE", 2, Status.NEW, 1));
         assertEquals(gson.toJson(subtaskStorage), response.body());
     }
 
@@ -254,8 +254,8 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     void clearSubtask() throws IOException, InterruptedException {
         Epic epic = new Epic("Epic_1", "Desk_epic_1");
         Subtask subtask = new Subtask("SubTask_1", "Desk_SubTask_1", 1);
-        String  epicJson = gson.toJson(epic);
-        String  subtaskJson = gson.toJson(subtask);
+        String epicJson = gson.toJson(epic);
+        String subtaskJson = gson.toJson(subtask);
         URI urlSubtask = URI.create("http://localhost:8080/tasks/subtask");
         HttpRequest createEpic = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/epic"))
@@ -285,7 +285,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     @Test
     void clearTask() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/task");
-        Task task = new Task("Task_1","Desk_task_1");
+        Task task = new Task("Task_1", "Desk_task_1");
         String json = gson.toJson(task);
         HttpRequest requestCreate = HttpRequest.newBuilder()
                 .uri(url)
@@ -305,7 +305,7 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         client.send(clear, handler);
         HttpResponse<String> response = client.send(getTasks, handler);
         HashMap<Integer, Task> taskStorage = new HashMap<>();
-        taskStorage.put(1,  new Task("Task_1", "Desk_task_1", 1, Status.NEW));
+        taskStorage.put(1, new Task("Task_1", "Desk_task_1", 1, Status.NEW));
         assertEquals(gson.toJson(new HashMap<Integer, Task>()), response.body());
     }
 
@@ -313,8 +313,8 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     void clearEpic() throws IOException, InterruptedException {
         Epic epic = new Epic("Epic_1", "Desk_epic_1");
         Subtask subtask = new Subtask("SubTask_1", "Desk_SubTask_1", 1);
-        String  epicJson = gson.toJson(epic);
-        String  subtaskJson = gson.toJson(subtask);
+        String epicJson = gson.toJson(epic);
+        String subtaskJson = gson.toJson(subtask);
         URI urlSubtask = URI.create("http://localhost:8080/tasks/subtask");
         HttpRequest createEpic = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/epic"))
@@ -348,12 +348,12 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
     @Test
     void loadAllTasks() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/task");
-        Task task = new Task("Task_1","Desk_task_1");
+        Task task = new Task("Task_1", "Desk_task_1");
         Epic epic = new Epic("Epic_1", "Desk_epic_1");
         Subtask subtask = new Subtask("SubTask_1", "Desk_SubTask_1", 2);
         String taskJson = gson.toJson(task);
-        String  epicJson = gson.toJson(epic);
-        String  subtaskJson = gson.toJson(subtask);
+        String epicJson = gson.toJson(epic);
+        String subtaskJson = gson.toJson(subtask);
         URI urlSubtask = URI.create("http://localhost:8080/tasks/subtask");
         HttpRequest createTask = HttpRequest.newBuilder()
                 .uri(url)
@@ -393,11 +393,11 @@ class HttpTaskServerTest extends TaskManagerTest<HttpTaskManager> {
         HttpResponse<String> responseSubtask = client.send(getSubtask, handler);
 
         HashMap<Integer, Task> taskStorage = new HashMap<>();
-        taskStorage.put(1,  new Task("Task_1", "Desk_task_1", 1, Status.NEW));
+        taskStorage.put(1, new Task("Task_1", "Desk_task_1", 1, Status.NEW));
         HashMap<Integer, Epic> epicStorage = new HashMap<>();
         epicStorage.put(2, new Epic("Epic_1", "Desk_epic_1", 2, Status.NEW, new ArrayList<>(List.of(3))));
         HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
-        subtaskStorage.put(3,  new Subtask("SubTask_1", "Desk_SubTask_1", 3, Status.NEW, 2));
+        subtaskStorage.put(3, new Subtask("SubTask_1", "Desk_SubTask_1", 3, Status.NEW, 2));
 
         neHttpTaskServer.stopHttpTaskServer();
         assertEquals(gson.toJson(taskStorage), responseTask.body());

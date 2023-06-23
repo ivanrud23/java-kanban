@@ -6,15 +6,10 @@ import model.Task;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 public interface TaskManager {
 
     Task getById(Integer id) throws IOException, InterruptedException;
-
-
-
-//    void save() throws IOException, NullPointerException, InterruptedException;
 
     HashMap<Integer, Task> getTaskStorage();
 

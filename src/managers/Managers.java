@@ -14,7 +14,7 @@ public class Managers {
 
     private final static Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, localDateAdapter.nullSafe())
-            .registerTypeAdapter(Duration.class,new DurationTypeAdapter().nullSafe())
+            .registerTypeAdapter(Duration.class, new DurationTypeAdapter().nullSafe())
             .setPrettyPrinting()
             .create();
 
@@ -25,6 +25,7 @@ public class Managers {
     public static TaskManager getDefault() throws IOException, InterruptedException {
         return new HttpTaskManager();
     }
+
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }

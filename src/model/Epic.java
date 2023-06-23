@@ -17,6 +17,7 @@ public class Epic extends Task {
         super(name, description);
         epic = true;
     }
+
     public Epic(String name, String description, Integer id) {
         super(name, description, id);
         epic = true;

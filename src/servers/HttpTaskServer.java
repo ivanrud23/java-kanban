@@ -25,12 +25,10 @@ public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Gson gson = Managers.getGson();
     private HttpTaskManager httpTaskManager;
-
     private final HttpServer httpServer;
-//    private final KVServer kvServer = new KVServer();
+
 
     public HttpTaskServer() throws IOException, InterruptedException {
-//        kvServer.start();
         this.httpServer = HttpServer.create();
         httpTaskManager = new HttpTaskManager();
         this.httpServer.bind(new InetSocketAddress(PORT), 0);
@@ -46,10 +44,6 @@ public class HttpTaskServer {
     public HttpTaskManager getHttpTaskManager() {
         return httpTaskManager;
     }
-
-//    public KVServer getKvServer() {
-//        return kvServer;
-//    }
 
     public void startHttpTaskServer() {
         httpServer.start();
@@ -403,13 +397,10 @@ public class HttpTaskServer {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
         KVServer kvServer = new KVServer();
         kvServer.start();
         HttpTaskServer httpTaskServer = new HttpTaskServer();
-
         HttpTaskManager httpTaskManager = httpTaskServer.getHttpTaskManager();
-
 
         httpTaskManager.createTask(new Task("Task_1", "Desk_task_1"
                 , "01.07.2023 10:00", "PT10M"));
@@ -428,7 +419,5 @@ public class HttpTaskServer {
         httpTaskManager.getById(1);
         httpTaskManager.getById(2);
         httpTaskManager.getById(7);
-
-
     }
 }

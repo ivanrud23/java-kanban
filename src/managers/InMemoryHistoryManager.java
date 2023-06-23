@@ -36,7 +36,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void remove(int id) throws NullPointerException{
+    public void remove(int id) throws NullPointerException {
         if (!getCustomLinkedList().getTasks().isEmpty()) {
             Node node = customLinkedList.historyStorage.get(id);
             if (customLinkedList.historyStorage.size() == 1) {
